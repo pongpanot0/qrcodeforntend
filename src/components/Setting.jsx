@@ -9,9 +9,9 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Household from "./HouseHold/BuildingUnit";
-import Floor from "./Floor/Floor";
+
 import Room from "./Room/Room";
-import Door from "./Door/Door";
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -53,9 +53,15 @@ function a11yProps(index) {
   };
 }
 export default function Setting() {
-  const [value, setValue] = React.useState(0);
-
+  const [value, setValue] = React.useState(() => {
+    const stickyValue = window.localStorage.getItem("keys");
+    return stickyValue !== null
+      ? JSON.parse(stickyValue)
+      : 0;
+  });
   const handleChange = (event, newValue) => {
+    console.log(newValue);
+    localStorage.setItem("keys", newValue);
     setValue(newValue);
   };
   return (
@@ -69,6 +75,7 @@ export default function Setting() {
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
                 <Tabs
                   value={value}
+                  defaultActiveKey={localStorage.getItem("keys")}
                   onChange={handleChange}
                   aria-label="basic tabs example"
                   variant="fullWidth"

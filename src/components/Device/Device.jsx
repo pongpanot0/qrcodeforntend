@@ -1,9 +1,10 @@
 import React from "react";
-import Box from "@mui/material/Box";
+
 import Input from "@mui/material/Input";
-import Grid from "@mui/material/Grid";
+
 import SearchIcon from "@mui/icons-material/Search";
 import InputAdornment from "@mui/material/InputAdornment";
+import Grid from "@mui/material/Grid";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
@@ -15,8 +16,9 @@ import Paper from "@mui/material/Paper";
 import axios from "axios";
 import DeviceTable from "./DeviceTable";
 import DeviceTree from "./DeviceTree";
-import ToggleButton from "@mui/material/ToggleButton";
-import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Box from "@mui/material/Box";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -50,7 +52,9 @@ function Device() {
   const [name, setName] = React.useState("");
   const [create_by, setcreate_by] = React.useState("");
   const [open, setOpen] = React.useState(false);
-  const [positionuuid,setpositionuuid] = React.useState('')
+  const [positionuuid, setpositionuuid] = React.useState("");
+  const [accDoorNo, setaccDoorNo] = React.useState("");
+  const [err, setErr] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
@@ -58,22 +62,30 @@ function Device() {
     setOpen(false);
   };
 
-  const user = () => {
+
+
+  const createDevice = (e) => {
+    e.preventDefault();
+    setErr(true);
     const user_id = localStorage.getItem("user_id");
-    setcreate_by(user_id);
-  };
-  const createDevice = () => {
     const items = localStorage.getItem("company_id");
-   
     axios
       .post(`${process.env.REACT_APP_API_KEY}/createdevice/${items}`, {
         devSn: devSn,
         name: name,
         positionuuid: positionuuid,
-        create_by: create_by,
+        create_by: user_id,
+        accDoorNo: accDoorNo,
       })
       .then((res) => {
-        console.log(res);
+        
+        if (res.data.code === 0) {
+
+          setErr(false);
+          handleClose();
+          window.location.reload(false);
+        }
+        console.log(res.data.code);
       })
       .catch(function (error) {
         console.log(error);
@@ -99,6 +111,19 @@ function Device() {
           <br></br>
 
           <Box sx={{ width: "100%" }}>
+            {err ? (
+              <Backdrop
+                sx={{
+                  color: "#fff",
+                  zIndex: (theme) => theme.zIndex.drawer + 1,
+                }}
+                open={open}
+              >
+                <CircularProgress color="inherit" className="centered" />
+              </Backdrop>
+            ) : (
+              <> </>
+            )}
             <Grid
               container
               rowSpacing={1}
@@ -107,11 +132,11 @@ function Device() {
               <Grid item xs={12}>
                 {" "}
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{ width: "100%" }}>
-                    <div class="col-25">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">Device SN</label>
                     </div>
-                    <div class="col-75">
+                    <div className="col-75">
                       <TextField
                         width="100%"
                         type="text"
@@ -130,11 +155,11 @@ function Device() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{ width: "100%" }}>
-                    <div class="col-25">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">Installation location</label>
                     </div>
-                    <div class="col-75">
+                    <div className="col-75">
                       <TextField
                         type="text"
                         id="fname"
@@ -152,11 +177,11 @@ function Device() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{ width: "100%" }}>
-                    <div class="col-25">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">Device name</label>
                     </div>
-                    <div class="col-75">
+                    <div className="col-75">
                       <TextField
                         type="text"
                         id="fname"
@@ -174,18 +199,20 @@ function Device() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{ width: "100%" }}>
-                    <div class="col-25">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">DoorNumber</label>
                     </div>
-                    <div class="col-75">
+                    <div className="col-75">
                       <TextField
                         type="text"
                         id="fname"
                         name="firstname"
                         placeholder="DoorNumber"
                         fullWidth
-                     
+                        onChange={(e) => {
+                          setaccDoorNo(e.target.value);
+                        }}
                       />
                     </div>
                   </div>
@@ -197,7 +224,9 @@ function Device() {
           <hr></hr>
           <br />
           <Stack direction="row" spacing={2}>
-            <Button variant="contained">Submit</Button>
+            <Button variant="contained" onClick={createDevice}>
+              Submit
+            </Button>
             <Button variant="outlined" onClick={handleClose}>
               Close
             </Button>

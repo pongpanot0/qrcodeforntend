@@ -14,6 +14,9 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
+import LinearProgress from "@mui/material/LinearProgress";
 function Copyright(props) {
   return (
     <Typography
@@ -35,7 +38,9 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
+  const [open, setOpen] = React.useState(false);
   const Login = () => {
+    setOpen(true);
     axios
       .post(`${process.env.REACT_APP_API_KEY}/login`, {
         email: email,
@@ -51,8 +56,9 @@ export default function Login() {
           localStorage.setItem("email", res.data.user[0].email);
           localStorage.setItem("company_id", res.data.user[0].company_id);
           setTimeout(() => {
+            setOpen(false);
             navigate("/home", { replace: true });
-          }, "2000");
+          }, "1000");
         }
         if (res.data.status === 400) {
           console.log("1234");
@@ -97,6 +103,17 @@ export default function Login() {
 
   return (
     <ThemeProvider theme={theme}>
+      {open ? (
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={open}
+         
+        >
+          <CircularProgress color="inherit"  className="centered"/>
+        </Backdrop>
+      ) : (
+        <> </>
+      )}
       <Grid container component="main" sx={{ height: "100vh" }}>
         <CssBaseline />
         <Grid

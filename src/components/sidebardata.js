@@ -9,7 +9,7 @@ import LivingIcon from "@mui/icons-material/Living";
 export const SidebarData = [
   {
     title: "Home",
-    path: "/",
+    path: "/home",
     icon: <HomeIcon />,
     cName: "nav-text",
   },

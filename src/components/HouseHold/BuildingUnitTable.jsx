@@ -18,10 +18,22 @@ import Checkbox from "@mui/material/Checkbox";
 import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 
-
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+import BuildingDetail from "./BuildingDetail";
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
-
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 const headCells = [
   {
     id: "name",
@@ -49,10 +61,16 @@ const headCells = [
     label: "devNum",
   },
   {
-    id: "protein",
+    id: "householdNum",
     numeric: true,
     disablePadding: false,
     label: "householdNum",
+  },
+  {
+    id: "Action",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
   },
 ];
 
@@ -151,7 +169,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          BuildingUnitTable
         </Typography>
       )}
     </Toolbar>
@@ -173,10 +191,31 @@ export default function BuildingUnitTable() {
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [uuid, setUUid] = React.useState("");
+  const handleClose = () => setOpen(false);
 
-  const handleClose2 = () => {
-    setError(false);
-    window.location.reload();
+  const Delete = (id) => {
+    setError(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .delete(`${process.env.REACT_APP_API_KEY}/deletebuilding/${items}/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.data.code === 0) {
+          setError(false);
+          window.location.reload(false);
+          console.log(res.data.code);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+  const Edit = (id) => {
+    setOpen(true);
+
+    setUUid(id);
   };
   React.useEffect(() => {
     setError(true);
@@ -187,13 +226,11 @@ export default function BuildingUnitTable() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getbuild/${items}`)
       .then((res) => {
-        console.log(res.data.data.data.list);
         setBuilding(res.data.data.data.list);
         setCount(res.data.data.data.totalCount);
         setError(false);
       });
   }, []);
-  const [searchedVal3, setSearchedVal3] = React.useState("");
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -277,7 +314,6 @@ export default function BuildingUnitTable() {
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.name)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -286,6 +322,7 @@ export default function BuildingUnitTable() {
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
+                            onClick={(event) => handleClick(event, row.name)}
                             color="primary"
                             checked={isItemSelected}
                             inputProps={{
@@ -305,6 +342,24 @@ export default function BuildingUnitTable() {
                         <TableCell align="right">{row.code}</TableCell>
                         <TableCell align="right">{row.devNum}</TableCell>
                         <TableCell align="right">{row.householdNum}</TableCell>
+                        <TableCell align="right">
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              Delete(row.uuid);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              Edit(row.uuid);
+                            }}
+                          >
+                            Details
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })}
@@ -330,6 +385,18 @@ export default function BuildingUnitTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+
+        <Modal
+          keepMounted
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style}>
+            <BuildingDetail setUUid={uuid} handleClose={open}/>
+          </Box>
+        </Modal>
       </Box>
     </>
   );

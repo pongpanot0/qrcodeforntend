@@ -16,8 +16,9 @@ import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
 
 import { visuallyHidden } from "@mui/utils";
-import LinearProgress from '@mui/material/LinearProgress';
+import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
+import { Button } from "@mui/material";
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
@@ -36,10 +37,16 @@ const headCells = [
     label: "buildingName",
   },
   {
-    id: "fat",
+    id: "code",
     numeric: true,
     disablePadding: false,
-    label: "Fat (g)",
+    label: "code",
+  },
+  {
+    id: "Action",
+    numeric: true,
+    disablePadding: false,
+    label: "Action",
   },
 ];
 
@@ -138,7 +145,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Nutrition
+          RoomTable
         </Typography>
       )}
     </Toolbar>
@@ -160,11 +167,29 @@ export default function RoomTable() {
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
-  
+  const Delete = (uuid) => {
+    setError(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${uuid}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.code === 0) {
+          setError(false);
+          window.location.reload(false);
+          console.log(res.data.code);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
   const handleClose2 = () => {
     setError(false);
     window.location.reload();
   };
+  
   React.useEffect(() => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -174,7 +199,7 @@ export default function RoomTable() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getRoom/${items}`)
       .then((res) => {
-        console.log(res.data.data.list, "111");
+        console.warn(res.data.data.list, "111");
         setRoom(res.data.data.list);
         setCount(res.data.data.totalCount);
         setError(false);
@@ -233,13 +258,7 @@ export default function RoomTable() {
 
   return (
     <>
-      {err ? (
-       
-       <LinearProgress />
-       
-      ) : (
-        <> </>
-      )}
+      {err ? <LinearProgress /> : <> </>}
       <Box sx={{ width: "100%" }}>
         <Paper sx={{ width: "100%", mb: 2 }}>
           <EnhancedTableToolbar numSelected={selected.length} />
@@ -294,7 +313,17 @@ export default function RoomTable() {
                           {row.name}
                         </TableCell>
                         <TableCell align="right">{row.buildingName}</TableCell>
-                        <TableCell align="right">{row.fat}</TableCell>
+                        <TableCell align="right">{row.code}</TableCell>
+                        
+                        <TableCell align="right" color="primary">
+                          <Button
+                            onClick={() => {
+                              Delete(row.uuid);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })}

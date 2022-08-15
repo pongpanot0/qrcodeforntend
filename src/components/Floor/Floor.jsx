@@ -65,11 +65,11 @@ function Floor() {
               <Grid item xs={12}>
                 {" "}
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{width:'100%'}}>
-                    <div class="col-25">
+                  <div className="row" style={{width:'100%'}}>
+                    <div className="col-25">
                       <label for="fname">ตึก</label>
                     </div>
-                    <div class="col-50">
+                    <div className="col-50">
                       <TextField
                         width="100%"
                         type="text"
@@ -85,11 +85,11 @@ function Floor() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{width:'100%'}}>
-                    <div class="col-25" >
+                  <div className="row" style={{width:'100%'}}>
+                    <div className="col-25" >
                       <label for="fname">Name</label>
                     </div>
-                    <div class="col-50">
+                    <div className="col-50">
                       <TextField
                         type="text"
                         fullWidth
@@ -104,11 +104,11 @@ function Floor() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row" style={{width:'100%'}}>
-                    <div class="col-25">
+                  <div className="row" style={{width:'100%'}}>
+                    <div className="col-25">
                       <label for="fname">Index</label>
                     </div>
-                    <div class="col-50" >
+                    <div className="col-50" >
                       <TextField
                         type="text"
                         id="fname"

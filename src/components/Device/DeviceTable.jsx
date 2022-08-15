@@ -17,7 +17,9 @@ import Checkbox from "@mui/material/Checkbox";
 import LinearProgress from "@mui/material/LinearProgress";
 import { visuallyHidden } from "@mui/utils";
 import axios from "axios";
-
+import { Button } from "@mui/material";
+import Alert from "@mui/material/Alert";
+import AlertTitle from "@mui/material/AlertTitle";
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 
@@ -47,10 +49,10 @@ const headCells = [
     label: "deviceModelName",
   },
   {
-    id: "protein",
+    id: "Action",
     numeric: true,
     disablePadding: false,
-    label: "Protein (g)",
+    label: "Action",
   },
 ];
 
@@ -171,10 +173,12 @@ export default function DeviceTable() {
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
   const [device, setDevice] = React.useState([]);
-
-
+  const [success, setSuccess] = React.useState(false);
   React.useEffect(() => {
     setError(true);
+    getData();
+  }, []);
+  const  getData =  (event)  =>  {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
@@ -187,7 +191,25 @@ export default function DeviceTable() {
         setCount(res.data.data.totalCount);
         setError(false);
       });
-  }, []);
+  };
+  const Delete = (id) => {
+    console.log(getData)
+    setSuccess(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .delete(`${process.env.REACT_APP_API_KEY}/removeDevice/${items}/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.code === 0) {
+          setSuccess(false);
+          window.location.reload(false);
+          console.log(res.data.code);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -242,6 +264,12 @@ export default function DeviceTable() {
   return (
     <Box sx={{ width: "100%" }}>
       {err ? <LinearProgress /> : <> </>}
+      {success ? (
+        <LinearProgress />
+      ) : (
+        <></>
+      )}
+
       <Paper sx={{ width: "100%", mb: 2 }}>
         <EnhancedTableToolbar numSelected={selected.length} />
         <TableContainer>
@@ -299,7 +327,15 @@ export default function DeviceTable() {
                         {row.positionFullName}
                       </TableCell>
                       <TableCell align="right">{row.deviceModelName}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">
+                        <Button
+                          onClick={() => {
+                            Delete(row.devSn);
+                          }}
+                        >
+                          RemoveDevice
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   );
                 })}

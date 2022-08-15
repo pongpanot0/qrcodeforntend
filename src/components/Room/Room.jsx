@@ -15,8 +15,13 @@ import FormControl from "@mui/material/FormControl";
 
 import TextField from "@mui/material/TextField";
 import RoomTable from "./RoomTable";
-import "./Room.css";
+
 import RoomTree from "./RoomTree";
+import axios from "axios";
+
+import MenuItem from "@mui/material/MenuItem";
+
+import Select from "@mui/material/Select";
 const style = {
   position: "absolute",
   top: "50%",
@@ -39,18 +44,60 @@ const Item = styled(Paper)(({ theme }) => ({
 }));
 const ariaLabel = { "aria-label": "description" };
 function Floor() {
-  const [age, setAge] = React.useState("");
+  const [err, setError] = React.useState(false);
 
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const [room_buildingUuid, setroom_buildingUuid] = React.useState("");
+  const [room_name, setroom_name] = React.useState("");
+  const [building, setBuilding] = React.useState([]);
+  const [code,setCode]=React.useState('')
+  React.useEffect(() => {
+    setError(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .get(`${process.env.REACT_APP_API_KEY}/getbuild/${items}`)
+      .then((res) => {
+        setBuilding(res.data.data.data.list);
+        setError(false);
+      });
+  }, []);
+  const dateElement = building.map((row, i) => {
+    console.warn(row);
+    return <MenuItem value={row.uuid}>{row.name}</MenuItem>;
+  });
+  const createbuild = (e) => {
+    e.preventDefault();
+    setError(true);
+    const user_id = localStorage.getItem("user_id");
+    const items = localStorage.getItem("company_id");
+    axios
+      .post(`${process.env.REACT_APP_API_KEY}/createRoom/${items}`, {
+        room_buildingUuid: room_buildingUuid,
+        room_name: room_name,
+        created_by: user_id,
+        code:code
+      })
+      .then((res) => {
+        console.log(res.data)
+        if (res.data.code === 0) {
+          setError(false);
+          handleClose();
+          window.location.reload(false);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
   };
-
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+  };
+
+  const handleChange = (event) => {
+    setroom_buildingUuid(event.target.value);
   };
   return (
     <>
@@ -65,7 +112,6 @@ function Floor() {
           <br></br>
           <hr></hr>
           <br></br>
-    
 
           <Box sx={{ width: "100%" }}>
             <Grid
@@ -73,91 +119,86 @@ function Floor() {
               rowSpacing={1}
               columnSpacing={{ xs: 1, sm: 1, md: 1 }}
             >
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 {" "}
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row">
-                    <div class="col-30">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">ตึก</label>
                     </div>
-                    <div class="col-50">
-                      <TextField
-                      width="100%"
-                        type="text"
-                        id="fname"
-                        fullWidth
-                        name="firstname"
-                        placeholder="Your name.."
-                      />
+                    <div className="col-50">
+                      <FormControl fullWidth style={{ width: "100%" }}>
+                        <Select
+                          labelId="demo-simple-select-label"
+                          id="demo-simple-select"
+                          value={room_buildingUuid}
+                          label="Age"
+                          onChange={handleChange}
+                          fullWidth
+                        >
+                          {dateElement}
+                        </Select>
+                      </FormControl>
                     </div>
                   </div>
                   <br></br>
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row">
-                    <div class="col-30">
+              <Grid item xs={12}>
+                <FormControl sx={{ width: "100%" }}>
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-25">
                       <label for="fname">RoomName</label>
                     </div>
-                    <div class="col-50">
+                    <div className="col-75">
                       <TextField
                         type="text"
                         id="fname"
                         name="firstname"
                         placeholder="Your name.."
+                        fullWidth
+                        onChange={(e) => {
+                          setroom_name(e.target.value);
+                        }}
                       />
                     </div>
                   </div>
                   <br></br>
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
+              <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row">
-                    <div class="col-30">
+                  <div className="row" style={{ width: "100%" }}>
+                    <div className="col-30">
                       <label for="fname">RoomNum</label>
                     </div>
-                    <div class="col-50">
+                    <div className="col-50">
                       <TextField
                         type="text"
                         id="fname"
                         name="firstname"
                         placeholder="ใส่ได้เฉพาะตัวเลข"
                         fullWidth
+                        onChange={(e) => {
+                          setCode(e.target.value);
+                        }}
                       />
                     </div>
                   </div>
                   <br></br>
                 </FormControl>
               </Grid>
-              <Grid item xs={6}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div class="row">
-                    <div class="col-30">
-                      <label for="fname">ชั้น</label>
-                    </div>
-                    <div class="col-50">
-                      <TextField
-                        type="text"
-                        id="fname"
-                        name="firstname"
-                        placeholder="Your name.."
-                        fullWidth
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-                </FormControl>
-              </Grid>
+        
             </Grid>
           </Box>
-    <hr></hr>
-    <br />
+          <hr></hr>
+          <br />
           <Stack direction="row" spacing={2}>
-              <Button variant="contained">Submit</Button>
-              <Button variant="outlined">Reset</Button>
-            </Stack>
+            <Button variant="contained" onClick={createbuild}>
+              Submit
+            </Button>
+            <Button variant="outlined">Reset</Button>
+          </Stack>
         </Box>
       </Modal>
       <Box sx={{ flexGrow: 1 }} style={{ height: "100%" }}>
@@ -190,7 +231,9 @@ function Floor() {
             ></Box>
             <Stack direction="row" spacing={2}>
               <Button variant="contained">Submit</Button>
-              <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+              <Button variant="outlined" onClick={handleClose}>
+                Cancel
+              </Button>
             </Stack>
           </Grid>
           <Grid item md={8} xs={12}></Grid>
@@ -199,7 +242,7 @@ function Floor() {
               <Button variant="contained" onClick={handleOpen}>
                 Add
               </Button>
-              <Button variant="contained" color="error" >
+              <Button variant="contained" color="error">
                 Delete
               </Button>
             </Stack>
