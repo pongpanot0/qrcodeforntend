@@ -11,10 +11,7 @@ export default function RoomTree() {
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
 
-  const handleClose2 = () => {
-    setError(false);
-    window.location.reload();
-  };
+
   React.useEffect(() => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -24,14 +21,13 @@ export default function RoomTree() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getbuild/${items}`)
       .then((res) => {
-        console.log(res.data.data.data.list, "222");
         setRoom(res.data.data.data.list);
         setCount(res.data.data.totalCount);
         setError(false);
       });
   }, []);
   const data2 = room.map((row) => {
-    console.log(row);
+
     const id = row.id;
     const name = row.name;
   });

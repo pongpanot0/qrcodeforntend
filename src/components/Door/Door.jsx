@@ -41,18 +41,18 @@ const Item = styled(Paper)(({ theme }) => ({
 const ariaLabel = { "aria-label": "description" };
 function Door() {
   const [age, setAge] = React.useState("");
-
+  const [open, setOpen] = React.useState(false);
   const handleChange = (event) => {
     setAge(event.target.value);
   };
-
-  const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
   };
+
+
 
   return (
     <>

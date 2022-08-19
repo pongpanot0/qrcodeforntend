@@ -49,7 +49,7 @@ function Floor() {
   const [room_buildingUuid, setroom_buildingUuid] = React.useState("");
   const [room_name, setroom_name] = React.useState("");
   const [building, setBuilding] = React.useState([]);
-  const [code,setCode]=React.useState('')
+  const [code, setCode] = React.useState("");
   React.useEffect(() => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -61,8 +61,8 @@ function Floor() {
       });
   }, []);
   const dateElement = building.map((row, i) => {
-    console.warn(row);
-    return <MenuItem value={row.uuid}>{row.name}</MenuItem>;
+    console.log(row);
+    return <MenuItem value={row.id}>{row.name}</MenuItem>;
   });
   const createbuild = (e) => {
     e.preventDefault();
@@ -74,14 +74,12 @@ function Floor() {
         room_buildingUuid: room_buildingUuid,
         room_name: room_name,
         created_by: user_id,
-        code:code
+        code: code,
       })
+
       .then((res) => {
-        console.log(res.data)
         if (res.data.code === 0) {
           setError(false);
-          handleClose();
-          window.location.reload(false);
         }
       })
       .catch(function (error) {
@@ -188,7 +186,6 @@ function Floor() {
                   <br></br>
                 </FormControl>
               </Grid>
-        
             </Grid>
           </Box>
           <hr></hr>

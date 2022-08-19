@@ -14,12 +14,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-
 import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import { Button } from "@mui/material";
-
+import RoomDetail from "./RoomDetail";
+import Modal from "@mui/material/Modal";
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 
@@ -155,6 +155,17 @@ const EnhancedTableToolbar = (props) => {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
 
 export default function RoomTable() {
   const [order, setOrder] = React.useState("asc");
@@ -167,6 +178,14 @@ export default function RoomTable() {
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [uuid, setUUid] = React.useState("");
+  const handleClose = () => setOpen(false);
+  const Edit = (id) => {
+    setOpen(true);
+
+    setUUid(id);
+  };
   const Delete = (uuid) => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -185,11 +204,6 @@ export default function RoomTable() {
       });
   };
 
-  const handleClose2 = () => {
-    setError(false);
-    window.location.reload();
-  };
-  
   React.useEffect(() => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -199,13 +213,11 @@ export default function RoomTable() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getRoom/${items}`)
       .then((res) => {
-        console.warn(res.data.data.list, "111");
         setRoom(res.data.data.list);
         setCount(res.data.data.totalCount);
         setError(false);
       });
   }, []);
-  const [searchedVal3, setSearchedVal3] = React.useState("");
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -284,11 +296,9 @@ export default function RoomTable() {
                   .map((row, index) => {
                     const isItemSelected = isSelected(row.name);
                     const labelId = `enhanced-table-checkbox-${index}`;
-
                     return (
                       <TableRow
                         hover
-                        onClick={(event) => handleClick(event, row.name)}
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
@@ -297,6 +307,7 @@ export default function RoomTable() {
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
+                            onClick={(event) => handleClick(event, row.name)}
                             color="primary"
                             checked={isItemSelected}
                             inputProps={{
@@ -314,7 +325,7 @@ export default function RoomTable() {
                         </TableCell>
                         <TableCell align="right">{row.buildingName}</TableCell>
                         <TableCell align="right">{row.code}</TableCell>
-                        
+
                         <TableCell align="right" color="primary">
                           <Button
                             onClick={() => {
@@ -322,6 +333,14 @@ export default function RoomTable() {
                             }}
                           >
                             Delete
+                          </Button>
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              Edit(row.uuid);
+                            }}
+                          >
+                            Details
                           </Button>
                         </TableCell>
                       </TableRow>
@@ -349,6 +368,17 @@ export default function RoomTable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
+        <Modal
+          keepMounted
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="keep-mounted-modal-title"
+          aria-describedby="keep-mounted-modal-description"
+        >
+          <Box sx={style}>
+            <RoomDetail setUUid={uuid} handleClose={open} />
+          </Box>
+        </Modal>
       </Box>
     </>
   );

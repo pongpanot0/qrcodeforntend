@@ -16,7 +16,12 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from "axios";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import LinearProgress from "@mui/material/LinearProgress";
+
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 function Copyright(props) {
   return (
     <Typography
@@ -38,6 +43,10 @@ function Copyright(props) {
 const theme = createTheme();
 
 export default function Login() {
+  const handleClose = () => {
+    setOpen(false);
+    setOpen2(false);
+  };
   const [open, setOpen] = React.useState(false);
   const Login = () => {
     setOpen(true);
@@ -55,19 +64,21 @@ export default function Login() {
           localStorage.setItem("uuid", res.data.user[0].uuid);
           localStorage.setItem("email", res.data.user[0].email);
           localStorage.setItem("company_id", res.data.user[0].company_id);
+          localStorage.setItem("position", res.data.user[0].position);
+
           setTimeout(() => {
             setOpen(false);
-            navigate("/home", { replace: true });
+            navigate("/dashboard", { replace: true });
           }, "1000");
         }
         if (res.data.status === 400) {
-          console.log("1234");
+          setOpen2(true);
         }
       });
   };
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
-
+  const [open2, setOpen2] = React.useState(false);
   const navigate = useNavigate();
 
   const logout = () => {
@@ -107,14 +118,31 @@ export default function Login() {
         <Backdrop
           sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={open}
-         
         >
-          <CircularProgress color="inherit"  className="centered"/>
+          <CircularProgress color="inherit" className="centered" />
         </Backdrop>
       ) : (
         <> </>
       )}
       <Grid container component="main" sx={{ height: "100vh" }}>
+        <Dialog
+          open={open2}
+          onClose={handleClose}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+       
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              ชื่อหรือรหัสผ่านไม่ถูกต้อง
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} autoFocus>
+              เข้าใจแล้ว
+            </Button>
+          </DialogActions>
+        </Dialog>
         <CssBaseline />
         <Grid
           item
@@ -133,7 +161,7 @@ export default function Login() {
             backgroundPosition: "center",
           }}
         />
-        <Grid item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
+        <Grid id="login" item xs={12} sm={8} md={5} component={Paper} elevation={6} square>
           <Box
             sx={{
               my: 8,

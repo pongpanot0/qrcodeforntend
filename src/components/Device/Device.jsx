@@ -10,7 +10,7 @@ import Stack from "@mui/material/Stack";
 import Modal from "@mui/material/Modal";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
-import Divider from "@mui/material/Divider";
+
 import { experimentalStyled as styled } from "@mui/material/styles";
 import Paper from "@mui/material/Paper";
 import axios from "axios";
@@ -19,6 +19,13 @@ import DeviceTree from "./DeviceTree";
 import Box from "@mui/material/Box";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -55,14 +62,25 @@ function Device() {
   const [positionuuid, setpositionuuid] = React.useState("");
   const [accDoorNo, setaccDoorNo] = React.useState("");
   const [err, setErr] = React.useState(false);
+  const [building, setBuilding] = React.useState([]);
+  const [fail, setfail] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
+    window.location.reload(false);
   };
-
-
+  React.useEffect(() => {
+    setErr(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .get(`${process.env.REACT_APP_API_KEY}/getbuild/${items}`)
+      .then((res) => {
+        setBuilding(res.data.data.data.list);
+        setErr(false);
+      });
+  }, []);
 
   const createDevice = (e) => {
     e.preventDefault();
@@ -73,29 +91,30 @@ function Device() {
       .post(`${process.env.REACT_APP_API_KEY}/createdevice/${items}`, {
         devSn: devSn,
         name: name,
-        positionuuid: positionuuid,
+
         create_by: user_id,
         accDoorNo: accDoorNo,
       })
       .then((res) => {
-        
         if (res.data.code === 0) {
-
-          setErr(false);
           handleClose();
           window.location.reload(false);
         }
-        console.log(res.data.code);
+        if (res.data.status === 400) {
+          setErr(false);
+          setfail(true);
+          console.log("มี Device อยู๋แล้ว");
+        }
       })
       .catch(function (error) {
         console.log(error);
       });
   };
-  const [alignment, setAlignment] = React.useState("web");
 
-  const handleChange = (event, newAlignment) => {
-    setAlignment(newAlignment);
+  const handleChange = (event) => {
+    setpositionuuid(event.target.value);
   };
+
   return (
     <>
       <Modal
@@ -124,6 +143,33 @@ function Device() {
             ) : (
               <> </>
             )}
+            {fail ? (
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"มีบางอย่างผิดพลาด"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText
+                    textAlign={"center"}
+                    id="alert-dialog-description"
+                  >
+                    มี SerialNumber อยู่แล้ว
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button fullWidth onClick={handleClose} autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            ) : (
+              <> </>
+            )}
             <Grid
               container
               rowSpacing={1}
@@ -146,28 +192,6 @@ function Device() {
                         placeholder="Device SN"
                         onChange={(e) => {
                           setDevSn(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div className="row" style={{ width: "100%" }}>
-                    <div className="col-25">
-                      <label for="fname">Installation location</label>
-                    </div>
-                    <div className="col-75">
-                      <TextField
-                        type="text"
-                        id="fname"
-                        name="firstname"
-                        placeholder="ที่ติดตั้ง"
-                        fullWidth
-                        onChange={(e) => {
-                          setpositionuuid(e.target.value);
                         }}
                       />
                     </div>
@@ -285,12 +309,7 @@ function Device() {
           </Grid>
         </Grid>
         <Grid container spacing={2} columns={16} style={{ paddingTop: 10 }}>
-          <Grid item md={4} xs={12}>
-            <Item>
-              <DeviceTree />
-            </Item>
-          </Grid>
-          <Grid item md={12} xs={16}>
+          <Grid item md={16} xs={16}>
             <DeviceTable />
           </Grid>
         </Grid>
