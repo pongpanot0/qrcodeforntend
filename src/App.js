@@ -16,6 +16,7 @@ import Dashboard from "./components/Dashboard";
 import Qrcode from "./components/Qrcode/Qrcode";
 import QrcodeShow from "./components/Qrcode/QrcodeShow";
 import Devicetab from "./components/Device/Devicetab";
+import Log from "./components/log/Log";
 
 function App() {
   const MainContainer = () => (
@@ -52,6 +53,7 @@ function App() {
         <Route path="/Setting" element={<Setting />} />
         <Route path="/personal" element={<Personal />} />
         <Route path="/qrcode" element={<Qrcode />} />
+        <Route path="/log" element={<Log />} />
       </Routes>
     </>
   );

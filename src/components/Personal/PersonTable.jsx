@@ -25,19 +25,19 @@ import { Button } from "@mui/material";
 
 const headCells = [
   {
-    id: "การใช้งาน",
+    id: "mobile",
     numeric: false,
     disablePadding: true,
     label: "การใช้งาน",
   },
   {
-    id: "ชื่อ",
+    id: "first_name",
     numeric: true,
     disablePadding: false,
     label: "ชื่อ",
   },
   {
-    id: "นามสกุล",
+    id: "last_name",
     numeric: true,
     disablePadding: false,
     label: "นามสกุล",
@@ -166,7 +166,31 @@ const style = {
   boxShadow: 24,
   p: 4,
 };
-
+function descendingComparator(a, b, orderBy) {
+  if (b[orderBy] < a[orderBy]) {
+    return -1;
+  }
+  if (b[orderBy] > a[orderBy]) {
+    return 1;
+  }
+  return 0;
+}
+function getComparator(order, orderBy) {
+  return order === "desc"
+    ? (a, b) => descendingComparator(a, b, orderBy)
+    : (a, b) => -descendingComparator(a, b, orderBy);
+}
+function stableSort(array, comparator) {
+  const stabilizedThis = array.map((el, index) => [el, index]);
+  stabilizedThis.sort((a, b) => {
+    const order = comparator(a[0], b[0]);
+    if (order !== 0) {
+      return order;
+    }
+    return a[1] - b[1];
+  });
+  return stabilizedThis.map((el) => el[0]);
+}
 export default function PersonTable() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -180,7 +204,7 @@ export default function PersonTable() {
   const [err, setError] = React.useState(false);
   const [open, setOpen] = React.useState(false);
   const [uuid, setUUid] = React.useState("");
-  const handleClose = () => setOpen(false);
+
   const Edit = (id) => {
     setOpen(true);
 
@@ -213,32 +237,33 @@ export default function PersonTable() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getperson/${items}`)
       .then((res) => {
+        console.log(res.data)
         setRoom(res.data.data);
-        setCount(res.data.data.totalCount);
+        setCount(res.data.data.length);
         setError(false);
       });
   }, []);
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
+  const handleRequestSort = (event, id) => {
+    const isAsc = orderBy === id && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+    setOrderBy(id);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = room.map((n) => n.name);
+      const newSelected = room.map((n) => n.user_id);
       setSelected(newSelected);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, first_name) => {
+    const selectedIndex = selected.indexOf(first_name);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, first_name);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -262,7 +287,7 @@ export default function PersonTable() {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (mobile) => selected.indexOf(mobile) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -291,13 +316,16 @@ export default function PersonTable() {
               <TableBody>
                 {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-                {room
+                {stableSort(room, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
                     const isItemSelected = isSelected(row.user_id);
                     const labelId = `enhanced-table-checkbox-${index}`;
-                    if (row.mobile == 0) {
+                    if (row.mobile === 0) {
                       row.mobile = "ใช้มือถือ";
+                    }
+                    if (row.mobile === 1) {
+                      row.mobile = "ใช้ผ่านเว็ป";
                     }
                     return (
                       <TableRow

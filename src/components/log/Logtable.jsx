@@ -14,12 +14,12 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import LinearProgress from "@mui/material/LinearProgress";
 import { visuallyHidden } from "@mui/utils";
+import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import { Button } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+
+import Modal from "@mui/material/Modal";
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 
@@ -28,25 +28,19 @@ const headCells = [
     id: "name",
     numeric: false,
     disablePadding: true,
-    label: "name",
+    label: "Name",
   },
   {
-    id: "devSn",
+    id: "buildingName",
     numeric: true,
     disablePadding: false,
-    label: "devSn",
+    label: "buildingName",
   },
   {
-    id: "positionFullName",
+    id: "code",
     numeric: true,
     disablePadding: false,
-    label: "positionFullName",
-  },
-  {
-    id: "deviceModelName",
-    numeric: true,
-    disablePadding: false,
-    label: "deviceModelName",
+    label: "code",
   },
   {
     id: "Action",
@@ -151,7 +145,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Device
+          Logtable
         </Typography>
       )}
     </Toolbar>
@@ -160,6 +154,17 @@ const EnhancedTableToolbar = (props) => {
 
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
+};
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
 };
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -186,46 +191,34 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
-export default function DeviceTable() {
+export default function Logtable() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [room, setRoom] = React.useState([]);
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
-  const [device, setDevice] = React.useState([]);
-  const [success, setSuccess] = React.useState(false);
-  React.useEffect(() => {
-    setError(true);
-    getData();
-  }, []);
-  const getData = (event) => {
-    const items = localStorage.getItem("company_id");
-    if (items) {
-      setItems(items);
-    }
-    axios
-      .get(`${process.env.REACT_APP_API_KEY}/getdeviceuuid/${items}`)
-      .then((res) => {
-        console.log(res.data.data.list, "111");
-        setDevice(res.data.data.list);
-        setCount(res.data.data.totalCount);
-        setError(false);
-      });
+  const [open, setOpen] = React.useState(false);
+  const [uuid, setUUid] = React.useState("");
+  const handleClose = () => setOpen(false);
+  const Edit = (id) => {
+    setOpen(true);
+
+    setUUid(id);
   };
-  const Delete = (id) => {
-    console.log(getData);
-    setSuccess(true);
+  const Delete = (uuid) => {
+    setError(true);
     const items = localStorage.getItem("company_id");
     axios
-      .delete(`${process.env.REACT_APP_API_KEY}/removeDevice/${items}/${id}`)
+      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${uuid}`)
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 0) {
-          setSuccess(false);
+          setError(false);
           window.location.reload(false);
           console.log(res.data.code);
         }
@@ -235,15 +228,29 @@ export default function DeviceTable() {
       });
   };
 
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
+  React.useEffect(() => {
+    setError(true);
+    const items = localStorage.getItem("company_id");
+    if (items) {
+      setItems(items);
+    }
+    axios
+      .get(`${process.env.REACT_APP_API_KEY}/getRoom/${items}`)
+      .then((res) => {
+        setRoom(res.data.data.list);
+        setCount(res.data.data.totalCount);
+        setError(false);
+      });
+  }, []);
+  const handleRequestSort = (event, id) => {
+    const isAsc = orderBy === id && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+    setOrderBy(id);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = device.map((n) => n.name);
+      const newSelected = room.map((n) => n.name);
       setSelected(newSelected);
       return;
     }
@@ -283,104 +290,110 @@ export default function DeviceTable() {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - count) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - room.length) : 0;
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <>
       {err ? <LinearProgress /> : <> </>}
-      {success ? <LinearProgress /> : <></>}
-
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={count}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+      <Box sx={{ width: "100%" }}>
+        <Paper sx={{ width: "100%", mb: 2 }}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={count}
+              />
+              <TableBody>
+                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(device, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
-                  const labelId = `enhanced-table-checkbox-${index}`;
-
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.name)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.name}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                {room
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.name);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.name}
+                        selected={isItemSelected}
                       >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.devSn}</TableCell>
-                      <TableCell align="right">
-                        {row.positionFullName}
-                      </TableCell>
-                      <TableCell align="right">{row.deviceModelName}</TableCell>
-                      <TableCell align="right">
-                        <Button
-                          onClick={() => {
-                            Delete(row.devSn);
-                          }}
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={(event) => handleClick(event, row.name)}
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
                         >
-                          RemoveDevice
-                        </Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+                          {row.name}
+                        </TableCell>
+                        <TableCell align="right">{row.buildingName}</TableCell>
+                        <TableCell align="right">{row.code}</TableCell>
+
+                        <TableCell align="right" color="primary">
+                          <Button
+                            onClick={() => {
+                              Delete(row.uuid);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              Edit(row.uuid);
+                            }}
+                          >
+                            Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: (dense ? 33 : 53) * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+    
+      </Box>
+    </>
   );
 }
