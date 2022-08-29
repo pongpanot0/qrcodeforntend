@@ -17,6 +17,7 @@ import Qrcode from "./components/Qrcode/Qrcode";
 import QrcodeShow from "./components/Qrcode/QrcodeShow";
 import Devicetab from "./components/Device/Devicetab";
 import Log from "./components/log/Log";
+import Schedue from "./components/calendar/Calendar";
 
 function App() {
   const MainContainer = () => (
@@ -54,6 +55,7 @@ function App() {
         <Route path="/personal" element={<Personal />} />
         <Route path="/qrcode" element={<Qrcode />} />
         <Route path="/log" element={<Log />} />
+        <Route path="/schedue" element={<Schedue />} />
       </Routes>
     </>
   );

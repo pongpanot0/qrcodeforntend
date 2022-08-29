@@ -25,10 +25,10 @@ import Modal from "@mui/material/Modal";
 
 const headCells = [
   {
-    id: "name",
+    id: "communityName",
     numeric: false,
     disablePadding: true,
-    label: "Name",
+    label: "communityName",
   },
   {
     id: "buildingName",
@@ -37,10 +37,10 @@ const headCells = [
     label: "buildingName",
   },
   {
-    id: "code",
+    id: "eventTime",
     numeric: true,
     disablePadding: false,
-    label: "code",
+    label: "eventTime",
   },
   {
     id: "Action",
@@ -235,10 +235,11 @@ export default function Logtable() {
       setItems(items);
     }
     axios
-      .get(`${process.env.REACT_APP_API_KEY}/getRoom/${items}`)
+      .get(`${process.env.REACT_APP_API_KEY}/getLogDevice/${items}`)
       .then((res) => {
-        setRoom(res.data.data.list);
-        setCount(res.data.data.totalCount);
+        console.log(res.data.data.data);
+        setRoom(res.data.data.data.list);
+        setCount(res.data.data.data.totalCount);
         setError(false);
       });
   }, []);
@@ -318,7 +319,7 @@ export default function Logtable() {
                 {room
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    const isItemSelected = isSelected(row.name);
+                    const isItemSelected = isSelected(row.id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     return (
                       <TableRow
@@ -326,12 +327,12 @@ export default function Logtable() {
                         role="checkbox"
                         aria-checked={isItemSelected}
                         tabIndex={-1}
-                        key={row.name}
+                        key={row.id}
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox">
                           <Checkbox
-                            onClick={(event) => handleClick(event, row.name)}
+                            onClick={(event) => handleClick(event, row.id)}
                             color="primary"
                             checked={isItemSelected}
                             inputProps={{
@@ -345,10 +346,10 @@ export default function Logtable() {
                           scope="row"
                           padding="none"
                         >
-                          {row.name}
+                          {row.communityName}
                         </TableCell>
                         <TableCell align="right">{row.buildingName}</TableCell>
-                        <TableCell align="right">{row.code}</TableCell>
+                        <TableCell align="right">{row.eventTime}</TableCell>
 
                         <TableCell align="right" color="primary">
                           <Button
@@ -392,7 +393,6 @@ export default function Logtable() {
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Paper>
-    
       </Box>
     </>
   );

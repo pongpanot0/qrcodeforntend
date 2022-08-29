@@ -9,7 +9,8 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 import Logtable from "./Logtable";
-
+import { Button } from "@mui/material";
+import axios from "axios";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -44,23 +45,33 @@ TabPanel.propTypes = {
   value: PropTypes.number.isRequired,
 };
 
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    "aria-controls": `simple-tabpanel-${index}`,
-  };
-}
 export default function Log() {
   const [value, setValue] = React.useState(() => {
     const stickyValue = window.localStorage.getItem("keys");
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : 0;
+    return stickyValue !== null ? JSON.parse(stickyValue) : 0;
   });
   const handleChange = (event, newValue) => {
     console.log(newValue);
     localStorage.setItem("keys", newValue);
     setValue(newValue);
+  };
+  const getExcel = (e) => {
+    const items = localStorage.getItem("company_id");
+
+    e.preventDefault();
+    axios({
+      url: `${process.env.REACT_APP_API_KEY}/exportslogdevice/${items}`, //your url
+      method: "POST",
+      responseType: "blob", // important
+    }).then((response) => {
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Log${items}.xlsx`); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
   };
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -70,28 +81,10 @@ export default function Log() {
           <Item>
             {" "}
             <Box sx={{ width: "100%" }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  defaultActiveKey={localStorage.getItem("keys")}
-                  onChange={handleChange}
-                  aria-label="basic tabs example"
-                  variant="fullWidth"
-                  textColor="inherit"
-                  indicatorColor="secondary"
-                >
-                  <Tab label="Building Unit" {...a11yProps(0)} />
-
-                  <Tab label="Room" {...a11yProps(1)} />
-                </Tabs>
-              </Box>
-              <TabPanel value={value} index={0}>
-         <Logtable/>
-              </TabPanel>
-
-              <TabPanel value={value} index={1}>
-           
-              </TabPanel>
+              <Button variant="contained" color="error" onClick={getExcel}>
+                Export
+              </Button>
+              <Logtable />
             </Box>
           </Item>
         </Grid>

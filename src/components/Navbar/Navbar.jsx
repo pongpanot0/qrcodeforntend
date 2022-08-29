@@ -47,12 +47,12 @@ const Navbar = () => {
     <IconContext.Provider value={{ color: "#fff" }}>
       <Nav>
         <NavbarContainer>
-          <NavLogo to="/">
+          <NavLogo to="/" style={{width:'100%'}}>
             <NavIcon
               src="https://images.unsplash.com/photo-1660674033326-9b857d88bf59?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2064&q=80"
               alt="logo"
             />
-            Delta
+            Qr Smart Access
           </NavLogo>
           <MobileIcon onClick={handleClick}>
             {show ? <CgMenuRight /> : <CgMenuRight />}

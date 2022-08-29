@@ -86,6 +86,24 @@ function Floor() {
         console.log(error);
       });
   };
+  const getExcel = (e) => {
+    const items = localStorage.getItem("company_id");
+
+    e.preventDefault();
+    axios({
+      url: `${process.env.REACT_APP_API_KEY}/exportsRoom/${items}`, //your url
+      method: "POST",
+      responseType: "blob", // important
+    }).then((response) => {
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Room${items}.xlsx`); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => {
     setOpen(true);
@@ -239,6 +257,9 @@ function Floor() {
               <Button variant="contained" onClick={handleOpen}>
                 Add
               </Button>
+              <Button variant="contained" onClick={getExcel} color="error">
+                Export
+              </Button>
               <Button variant="contained" color="error">
                 Delete
               </Button>
@@ -246,12 +267,7 @@ function Floor() {
           </Grid>
         </Grid>
         <Grid container spacing={2} columns={16} style={{ paddingTop: 10 }}>
-          <Grid item md={4} xs={12}>
-            <Item>
-              <RoomTree />
-            </Item>
-          </Grid>
-          <Grid item md={12} xs={16}>
+          <Grid item md={16} xs={16}>
             <RoomTable />
           </Grid>
         </Grid>

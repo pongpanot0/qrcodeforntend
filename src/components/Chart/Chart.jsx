@@ -3,13 +3,11 @@ import React, { useCallback, useState } from "react";
 import { PieChart, Pie, Sector } from "recharts";
 
 const data = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 }
+  { name: "Group A", value: 400, fill: "#8884d8" },
+  { name: "Group B", value: 300, fill: "red" },
 ];
 
-const renderActiveShape = (props: any) => {
+const renderActiveShape = (props) => {
   const RADIAN = Math.PI / 180;
   const {
     cx,
@@ -22,7 +20,7 @@ const renderActiveShape = (props: any) => {
     fill,
     payload,
     percent,
-    value
+    value,
   } = props;
   const sin = Math.sin(-RADIAN * midAngle);
   const cos = Math.cos(-RADIAN * midAngle);
@@ -67,14 +65,14 @@ const renderActiveShape = (props: any) => {
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
         textAnchor={textAnchor}
-        fill="#333"
+        fill="black"
       >{`PV ${value}`}</text>
       <text
         x={ex + (cos >= 0 ? 1 : -1) * 12}
         y={ey}
         dy={18}
         textAnchor={textAnchor}
-        fill="#999"
+        fill="black"
       >
         {`(Rate ${(percent * 100).toFixed(2)}%)`}
       </text>
@@ -92,7 +90,7 @@ export default function App() {
   );
 
   return (
-    <PieChart width={400} height={400}>
+    <PieChart width={500} height={500}>
       <Pie
         activeIndex={activeIndex}
         activeShape={renderActiveShape}
@@ -101,7 +99,7 @@ export default function App() {
         cy={200}
         innerRadius={60}
         outerRadius={80}
-        fill="#8884d8"
+        fill={data.fill}
         dataKey="value"
         onMouseEnter={onPieEnter}
       />

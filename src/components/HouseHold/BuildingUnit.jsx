@@ -72,6 +72,26 @@ export default function BuildingUnit() {
   const handleClose = () => {
     setOpen(false);
   };
+  const getExcel = (e) => {
+    const items = localStorage.getItem("company_id");
+
+    e.preventDefault();
+    axios({
+      url: `${process.env.REACT_APP_API_KEY}/exportsBuilding/${items}`, //your url
+      method: "POST",
+      responseType: "blob", // important
+    }).then((response) => {
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `${items}.xlsx`); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+   
+    });
+  };
+
   return (
     <>
       <Modal
@@ -203,9 +223,13 @@ export default function BuildingUnit() {
               <Button variant="contained" onClick={handleOpen}>
                 Add
               </Button>
+              <Button variant="contained" style={{width:'100%'}} onClick={getExcel} color="error">
+              Export
+              </Button>
               <Button variant="contained" color="error">
                 Delete
               </Button>
+              
             </Stack>
           </Grid>
           <TableHouse />

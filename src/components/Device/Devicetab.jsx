@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import DeviceTable from "./DeviceTable";
 import Deviceshow from "./Deviceshow";
 import Device from "./Device";
+import Schedue from "../calendar/Calendar";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -56,9 +57,7 @@ function a11yProps(index) {
 export default function Devicetab() {
   const [value, setValue] = React.useState(() => {
     const stickyValue = window.localStorage.getItem("device");
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : 0;
+    return stickyValue !== null ? JSON.parse(stickyValue) : 0;
   });
   const handleChange = (event, newValue) => {
     localStorage.setItem("device", newValue);
@@ -85,8 +84,10 @@ export default function Devicetab() {
                   <Tab label="Setting Device" {...a11yProps(0)} />
 
                   <Tab label="Device Show" {...a11yProps(1)} />
+               
                 </Tabs>
               </Box>
+        
               <TabPanel value={value} index={0}>
                 <Device />
               </TabPanel>

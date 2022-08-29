@@ -10,7 +10,8 @@ function Mainpage() {
       <Hero />
       <Features  />
       <Content {...heroOne}/>
-
+      <Content {...heroTwo}/>
+      <Content {...heroThree}/>
     </>
   );
 }

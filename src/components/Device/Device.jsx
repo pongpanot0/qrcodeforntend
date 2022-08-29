@@ -110,7 +110,25 @@ function Device() {
         console.log(error);
       });
   };
-
+  const getExcel = (e) => {
+    const items = localStorage.getItem("company_id");
+    setErr(true);
+    e.preventDefault();
+    axios({
+      url: `${process.env.REACT_APP_API_KEY}/getDevice/${items}`, //your url
+      method: "POST",
+      responseType: "blob", // important
+    }).then((response) => {
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Device${items}.xlsx`); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+      setErr(false);
+    });
+  };
   const handleChange = (event) => {
     setpositionuuid(event.target.value);
   };
@@ -299,7 +317,7 @@ function Device() {
               <Button variant="contained" color="error">
                 Delete
               </Button>
-              <Button variant="contained" color="error">
+              <Button variant="contained" color="error" onClick={getExcel}>
                 Export
               </Button>
               <Button variant="contained" color="error">
