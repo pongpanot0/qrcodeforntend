@@ -71,21 +71,10 @@ export default function Setting() {
             {" "}
             <Box sx={{ width: "100%" }}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  defaultActiveKey={localStorage.getItem("keys")}
-                  onChange={handleChange}
-                  aria-label="basic tabs example"
-                  variant="fullWidth"
-                  textColor="inherit"
-                  indicatorColor="secondary"
-                >
-                  <Tab label="Building Unit" {...a11yProps(0)} />
-                </Tabs>
-              </Box>
-              <TabPanel value={value} index={0}>
+              
                 <Household />
-              </TabPanel>
+           
+            </Box>
             </Box>
           </Item>
         </Grid>

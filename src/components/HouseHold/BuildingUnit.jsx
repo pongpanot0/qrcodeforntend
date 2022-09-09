@@ -261,9 +261,9 @@ export default function BuildingUnit() {
             </Stack>
           </Grid>
           <Grid item md={8} xs={12}></Grid>
-          <Grid item md={2} xs={12}>
-            <Stack direction="row" spacing={2}>
-              <Button variant="contained"  onClick={handleOpen}>
+          <Grid item md={8} xs={12}>
+            <Stack direction="row" spacing={1}>
+              <Button variant="contained" onClick={handleOpen}>
                 เพิ่มโซน
               </Button>
               <Button variant="contained" onClick={handleOpen2}>
@@ -271,7 +271,7 @@ export default function BuildingUnit() {
               </Button>
               <Button
                 variant="contained"
-                style={{ width: "100%" }}
+              
                 onClick={getExcel}
                 color="error"
               >
