@@ -207,20 +207,18 @@ export default function PersonTable() {
 
   const Edit = (id) => {
     setOpen(true);
-
     setUUid(id);
   };
-  const Delete = (uuid) => {
+  const Delete = (id) => {
     setError(true);
-    const items = localStorage.getItem("company_id");
     axios
-      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${uuid}`)
+      .delete(`${process.env.REACT_APP_API_KEY}/Deletepersonal/${id}`)
       .then((res) => {
-        console.log(res.data);
-        if (res.data.code === 0) {
+        console.log(res.data.status);
+        if (res.data.status === 200) {
           setError(false);
-          window.location.reload(false);
-          console.log(res.data.code);
+          getDate();
+          console.log(res.data);
         }
       })
       .catch(function (error) {
@@ -230,6 +228,9 @@ export default function PersonTable() {
 
   React.useEffect(() => {
     setError(true);
+    getDate();
+  }, []);
+  const getDate = () => {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
@@ -237,12 +238,12 @@ export default function PersonTable() {
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getperson/${items}`)
       .then((res) => {
-        console.log(res.data)
+        console.log(res.data);
         setRoom(res.data.data);
         setCount(res.data.data.length);
         setError(false);
       });
-  }, []);
+  };
   const handleRequestSort = (event, id) => {
     const isAsc = orderBy === id && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -322,10 +323,10 @@ export default function PersonTable() {
                     const isItemSelected = isSelected(row.user_id);
                     const labelId = `enhanced-table-checkbox-${index}`;
                     if (row.mobile === 0) {
-                      row.mobile = "ใช้มือถือ";
+                      row.mobile = "ใช้งานผ่านมือถือ";
                     }
                     if (row.mobile === 1) {
-                      row.mobile = "ใช้ผ่านเว็ป";
+                      row.mobile = "ใช้งานผ่านเว็ป";
                     }
                     return (
                       <TableRow
@@ -360,7 +361,7 @@ export default function PersonTable() {
                         <TableCell align="right" color="primary">
                           <Button
                             onClick={() => {
-                              Delete(row.uuid);
+                              Delete(row.user_id);
                             }}
                           >
                             Delete

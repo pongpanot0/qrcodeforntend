@@ -228,8 +228,7 @@ export default function BuildingUnitTable() {
         console.log(res.data);
         if (res.data.data.code === 0) {
           setError(false);
-          window.location.reload(false);
-          console.log(res.data.code);
+          getDate();
         }
       })
       .catch(function (error) {
@@ -243,6 +242,9 @@ export default function BuildingUnitTable() {
   };
   React.useEffect(() => {
     setError(true);
+    getDate();
+  }, []);
+  const getDate = () => {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
@@ -254,7 +256,7 @@ export default function BuildingUnitTable() {
         setCount(res.data.data.data.totalCount);
         setError(false);
       });
-  }, []);
+  };
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -329,7 +331,6 @@ export default function BuildingUnitTable() {
                 rowCount={count}
               />
               <TableBody>
-             
                 {stableSort(building, getComparator(order, orderBy))
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
@@ -419,7 +420,7 @@ export default function BuildingUnitTable() {
           aria-describedby="keep-mounted-modal-description"
         >
           <Box sx={style}>
-            <BuildingDetail setUUid={uuid} handleClose={open}/>
+            <BuildingDetail setUUid={uuid} handleClose={open} />
           </Box>
         </Modal>
       </Box>

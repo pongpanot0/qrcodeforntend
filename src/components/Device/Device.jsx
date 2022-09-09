@@ -142,7 +142,7 @@ function Device() {
         aria-describedby="parent-modal-description"
       >
         <Box sx={{ ...style, width: 800 }}>
-          <h2 id="parent-modal-title">New Device</h2>
+          <h2 id="parent-modal-title">เพิ่ม</h2>
           <br></br>
           <hr></hr>
           <br></br>
@@ -304,24 +304,20 @@ function Device() {
               autoComplete="off"
             ></Box>
             <Stack direction="row" spacing={2}>
-              <Button variant="contained">Submit</Button>
-              <Button variant="outlined">Reset</Button>
+              <Button variant="contained">ค้นหา</Button>
             </Stack>
           </Grid>
           <Grid item md={8} xs={12}></Grid>
           <Grid item md={2} xs={12}>
             <Stack direction="row" spacing={2}>
               <Button variant="contained" onClick={handleOpen}>
-                Add
+                เพิ่ม
               </Button>
               <Button variant="contained" color="error">
-                Delete
-              </Button>
-              <Button variant="contained" color="error" onClick={getExcel}>
-                Export
+                ลบ
               </Button>
               <Button variant="contained" color="error">
-                Log
+                แก้ไข
               </Button>
             </Stack>
           </Grid>

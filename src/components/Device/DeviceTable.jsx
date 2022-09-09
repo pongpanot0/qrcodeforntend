@@ -28,31 +28,25 @@ const headCells = [
     id: "name",
     numeric: false,
     disablePadding: true,
-    label: "name",
+    label: "ชื่อ",
   },
   {
     id: "devSn",
     numeric: true,
     disablePadding: false,
-    label: "devSn",
+    label: "S/N",
   },
   {
     id: "positionFullName",
     numeric: true,
     disablePadding: false,
-    label: "positionFullName",
+    label: "โซน",
   },
   {
     id: "deviceModelName",
     numeric: true,
     disablePadding: false,
-    label: "deviceModelName",
-  },
-  {
-    id: "Action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
+    label: "รุ่น",
   },
 ];
 
@@ -151,7 +145,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          Device
+          อุปกรณ์
         </Typography>
       )}
     </Toolbar>
@@ -226,7 +220,7 @@ export default function DeviceTable() {
         console.log(res.data);
         if (res.data.code === 0) {
           setSuccess(false);
-          window.location.reload(false);
+          getData();
           console.log(res.data.code);
         }
       })
@@ -347,15 +341,7 @@ export default function DeviceTable() {
                         {row.positionFullName}
                       </TableCell>
                       <TableCell align="right">{row.deviceModelName}</TableCell>
-                      <TableCell align="right">
-                        <Button
-                          onClick={() => {
-                            Delete(row.devSn);
-                          }}
-                        >
-                          RemoveDevice
-                        </Button>
-                      </TableCell>
+                   
                     </TableRow>
                   );
                 })}

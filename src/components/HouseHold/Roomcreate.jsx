@@ -1,16 +1,23 @@
 import React from "react";
-import axios from "axios";
 import Box from "@mui/material/Box";
-
+import Input from "@mui/material/Input";
 import Grid from "@mui/material/Grid";
-
+import SearchIcon from "@mui/icons-material/Search";
+import InputAdornment from "@mui/material/InputAdornment";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
+import Modal from "@mui/material/Modal";
+
+import { experimentalStyled as styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
+
 import FormControl from "@mui/material/FormControl";
-import CircularProgress from "@mui/material/CircularProgress";
+
 import TextField from "@mui/material/TextField";
+import axios from "axios";
 
 import MenuItem from "@mui/material/MenuItem";
+
 import Select from "@mui/material/Select";
 const style = {
   position: "absolute",
@@ -24,25 +31,15 @@ const style = {
   px: 4,
   pb: 3,
 };
-function RoomDetail(setUUid) {
+const Roomcreate = () => {
+  const [err, setError] = React.useState(false);
+
   const [room_buildingUuid, setroom_buildingUuid] = React.useState("");
   const [room_name, setroom_name] = React.useState("");
   const [building, setBuilding] = React.useState([]);
   const [code, setCode] = React.useState("");
-  const [err, setError] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-  const [build, setBuild] = React.useState("");
-
-  const [back, setBack] = React.useState(false);
-  const dateElement = building.map((row, i) => {
-    return <MenuItem value={row.id}>{row.name}</MenuItem>;
-  });
-  const handleChange = (event) => {
-    setroom_buildingUuid(event.target.value);
-  };
+  const [fail, setfail] = React.useState(false);
   React.useEffect(() => {
-    setOpen(true);
-    setBack(true);
     setError(true);
     const items = localStorage.getItem("company_id");
     axios
@@ -51,26 +48,10 @@ function RoomDetail(setUUid) {
         setBuilding(res.data.data.data.list);
         setError(false);
       });
-    axios
-      .get(
-        `${process.env.REACT_APP_API_KEY}/getoneRoom/${items}/` +
-          setUUid.setUUid
-      )
-      .then((res) => {
-        setroom_buildingUuid(res.data.data.buildingId);
-        setroom_name(res.data.data.name);
-        setCode(res.data.data.code);
-        setBuild(res.data.data.buildingId);
-
-        setBack(false);
-        setOpen(false);
-      });
-  }, [setUUid]);
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
+  }, []);
+  const dateElement = building.map((row, i) => {
+    return <MenuItem value={row.id}>{row.name}</MenuItem>;
+  });
   const createbuild = (e) => {
     e.preventDefault();
     setError(true);
@@ -83,27 +64,31 @@ function RoomDetail(setUUid) {
         created_by: user_id,
         code: code,
       })
+
       .then((res) => {
-        console.log(res.data);
+        if (res.data.code === 10000) {
+          setfail(true);
+        }
         if (res.data.code === 0) {
-          setError(false);
-          handleClose();
           window.location.reload(false);
+          setError(false);
         }
       })
       .catch(function (error) {
         console.log(error);
       });
   };
+  const [open, setOpen] = React.useState(false);
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+  const handleChange = (event) => {
+    setroom_buildingUuid(event.target.value);
+  };
   return (
-    <div>
-      {" "}
+    
       <Box sx={{ ...style, width: 800 }}>
-        {back ? (
-          <CircularProgress color="inherit" className="centered" />
-        ) : (
-          <></>
-        )}
         <h2 id="parent-modal-title">New Room</h2>
         <br></br>
         <hr></hr>
@@ -127,7 +112,7 @@ function RoomDetail(setUUid) {
                       <Select
                         labelId="demo-simple-select-label"
                         id="demo-simple-select"
-                        value={build}
+                        value={room_buildingUuid}
                         label="Age"
                         onChange={handleChange}
                         fullWidth
@@ -153,7 +138,6 @@ function RoomDetail(setUUid) {
                       name="firstname"
                       placeholder="Your name.."
                       fullWidth
-                      value={room_name}
                       onChange={(e) => {
                         setroom_name(e.target.value);
                       }}
@@ -176,7 +160,6 @@ function RoomDetail(setUUid) {
                       name="firstname"
                       placeholder="ใส่ได้เฉพาะตัวเลข"
                       fullWidth
-                      value={code}
                       onChange={(e) => {
                         setCode(e.target.value);
                       }}
@@ -197,8 +180,8 @@ function RoomDetail(setUUid) {
           <Button variant="outlined">Reset</Button>
         </Stack>
       </Box>
-    </div>
-  );
-}
 
-export default RoomDetail;
+  );
+};
+
+export default Roomcreate;

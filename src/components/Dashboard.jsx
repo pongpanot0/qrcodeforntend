@@ -16,6 +16,7 @@ import IconButton from "@mui/material/IconButton";
 import { blue, red } from "@mui/material/colors";
 import Chart from "./Chart/Chart";
 import axios from "axios";
+import Deviceshow from "./Device/Deviceshow";
 export default function Dashboard() {
   const [deviceLenght, SetdeviceLengnt] = React.useState([]);
   const [buildingUnit, setBuildingUnit] = React.useState([]);
@@ -179,12 +180,15 @@ export default function Dashboard() {
             </Grid>
             <Grid item xs={12} md={12}>
               <Item>
-              {/*   <Chart /> */}
+              <Deviceshow/>
               </Item>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={0} sm={2} md={2}></Grid>
+        <Grid item xs={0} sm={2} md={2}>
+ 
+        </Grid>
+        
       </Grid>
     </Box>
   );

@@ -75,10 +75,9 @@ function Personal() {
       setError(false);
     });
   };
-  const createpersonal = (e) => {
-    setOpen(true);
-    e.preventDefault();
+  const createpersonal = () => {
     setError(true);
+    setOpen(true);
     const items = localStorage.getItem("company_id");
     const position = localStorage.getItem("position");
     axios
@@ -96,11 +95,14 @@ function Personal() {
         console.log(res.data);
         if (res.data.status === 200) {
           setOpen(false);
+          setOpen(false);
+          setOpen2(false);
+          setOpen3(false);
+          window.location.reload(false);
         }
         if (res.data.status === 400) {
           setOpen2(true);
         }
-        console.log(res);
       })
       .catch(function (error) {
         console.log(error);
@@ -148,19 +150,14 @@ function Personal() {
                   aria-labelledby="alert-dialog-title"
                   aria-describedby="alert-dialog-description"
                 >
-                  <DialogTitle id="alert-dialog-title">
-                    {"Use Google's location service?"}
-                  </DialogTitle>
                   <DialogContent>
                     <DialogContentText id="alert-dialog-description">
-                      Let Google help apps determine location. This means
-                      sending anonymous location data to Google, even when no
-                      apps are running.
+                      มีUsername นี่อยู่แล้ว
                     </DialogContentText>
                   </DialogContent>
                   <DialogActions>
                     <Button onClick={handleClose} autoFocus>
-                      Agree
+                      ยืนยัน
                     </Button>
                   </DialogActions>
                 </Dialog>
@@ -279,13 +276,26 @@ function Personal() {
               </Box>
             </Modal>
             <br></br>
-            <Button variant="contained" onClick={handleOpen}>
-              Add
+            <Button style={{ marginLeft: 10 }} variant="contained" onClick={handleOpen}>
+              เพิ่ม
             </Button>
-            <Button variant="contained"  style={{ marginLeft: 10 }} onClick={getExcel}>
-              Export
+            <Button style={{ marginLeft: 10 }} variant="contained" >
+              แก้ไข
             </Button>
-            <PersonTable />
+            <Button style={{ marginLeft: 10 }} variant="contained">
+              ลบ
+            </Button>
+            <Button variant="contained" style={{ marginLeft: 10 }} onClick={getExcel}>
+              ส่งออก
+            </Button>
+            <Button style={{ marginLeft: 10 }} variant="contained">
+              นำเข้า
+            </Button>
+            <Button style={{ marginLeft: 10 }} variant="contained">
+              อัปเดตพร้อมกัน
+            </Button>
+          
+            <PersonTable createpersonal={createpersonal} />
           </Grid>
           <Grid item xs={0} sm={2} md={2}></Grid>
         </Grid>

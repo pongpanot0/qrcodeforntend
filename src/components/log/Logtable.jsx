@@ -28,26 +28,27 @@ const headCells = [
     id: "communityName",
     numeric: false,
     disablePadding: true,
-    label: "communityName",
+    label: "ชื่อ",
   },
   {
     id: "buildingName",
     numeric: true,
     disablePadding: false,
-    label: "buildingName",
+    label: "โซน",
+  },
+  {
+    id: "devName",
+    numeric: true,
+    disablePadding: false,
+    label: "อุปกรณ์",
   },
   {
     id: "eventTime",
     numeric: true,
     disablePadding: false,
-    label: "eventTime",
+    label: "วันที่ / เวลา",
   },
-  {
-    id: "Action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
-  },
+
 ];
 
 function EnhancedTableHead(props) {
@@ -67,15 +68,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
+        
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -155,42 +148,8 @@ const EnhancedTableToolbar = (props) => {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-function getComparator(order, orderBy) {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-function stableSort(array, comparator) {
-  const stabilizedThis = array.map((el, index) => [el, index]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
+
+
 export default function Logtable() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
@@ -202,31 +161,8 @@ export default function Logtable() {
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-  const [uuid, setUUid] = React.useState("");
-  const handleClose = () => setOpen(false);
-  const Edit = (id) => {
-    setOpen(true);
 
-    setUUid(id);
-  };
-  const Delete = (uuid) => {
-    setError(true);
-    const items = localStorage.getItem("company_id");
-    axios
-      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${uuid}`)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.code === 0) {
-          setError(false);
-          window.location.reload(false);
-          console.log(res.data.code);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+  
 
   React.useEffect(() => {
     setError(true);
@@ -331,14 +267,7 @@ export default function Logtable() {
                         selected={isItemSelected}
                       >
                         <TableCell padding="checkbox">
-                          <Checkbox
-                            onClick={(event) => handleClick(event, row.id)}
-                            color="primary"
-                            checked={isItemSelected}
-                            inputProps={{
-                              "aria-labelledby": labelId,
-                            }}
-                          />
+                     
                         </TableCell>
                         <TableCell
                           component="th"
@@ -348,26 +277,12 @@ export default function Logtable() {
                         >
                           {row.communityName}
                         </TableCell>
+                        <TableCell align="right">{row.devName}</TableCell>
+                        
                         <TableCell align="right">{row.buildingName}</TableCell>
                         <TableCell align="right">{row.eventTime}</TableCell>
 
-                        <TableCell align="right" color="primary">
-                          <Button
-                            onClick={() => {
-                              Delete(row.uuid);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                          <Button
-                            color="primary"
-                            onClick={() => {
-                              Edit(row.uuid);
-                            }}
-                          >
-                            Details
-                          </Button>
-                        </TableCell>
+                       
                       </TableRow>
                     );
                   })}

@@ -13,6 +13,8 @@ import DeviceTable from "./DeviceTable";
 import Deviceshow from "./Deviceshow";
 import Device from "./Device";
 import Schedue from "../calendar/Calendar";
+import Devicegroup from "./Devicegroup";
+import Devicegroupcard from "./Devicegroupcard";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -71,29 +73,25 @@ export default function Devicetab() {
           <Item>
             {" "}
             <Box sx={{ width: "100%" }}>
-              <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
-                <Tabs
-                  value={value}
-                  defaultActiveKey={localStorage.getItem("keys")}
-                  onChange={handleChange}
-                  aria-label="basic tabs example"
-                  variant="fullWidth"
-                  textColor="inherit"
-                  indicatorColor="secondary"
-                >
-                  <Tab label="Setting Device" {...a11yProps(0)} />
+              <Box sx={{ borderBottom: 1, borderColor: "divider" }}></Box>
+              <Tabs
+                value={value}
+                defaultActiveKey={localStorage.getItem("keys")}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+                variant="fullWidth"
+                textColor="inherit"
+                indicatorColor="secondary"
+              >
+                <Tab label="ตั้งค่าอุปกรณ์" {...a11yProps(0)} />
 
-                  <Tab label="Device Show" {...a11yProps(1)} />
-               
-                </Tabs>
-              </Box>
-        
+                <Tab label="กำหนดสิทธิ์เข้าถึง" {...a11yProps(1)} />
+              </Tabs>
               <TabPanel value={value} index={0}>
                 <Device />
               </TabPanel>
-
               <TabPanel value={value} index={1}>
-                <Deviceshow />
+                <Devicegroupcard />
               </TabPanel>
             </Box>
           </Item>

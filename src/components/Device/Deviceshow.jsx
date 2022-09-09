@@ -1,8 +1,9 @@
 import React from "react";
 import ImageList from "@mui/material/ImageList";
 import ImageListItem from "@mui/material/ImageListItem";
-import axios from "axios";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
+import axios from "axios";
+
 
 import { Button } from "@mui/material";
 function Deviceshow() {
@@ -22,7 +23,7 @@ function Deviceshow() {
       });
   };
   const Opendoor = async (id) => {
-    console.log("1234");
+
     const items = localStorage.getItem("company_id");
     await axios
       .post(`${process.env.REACT_APP_API_KEY}/openDevice/${items}/${id}`)

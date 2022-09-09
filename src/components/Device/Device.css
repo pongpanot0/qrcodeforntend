@@ -1,0 +1,40 @@
+.ant-transfer {
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  margin-top: 70px !important;
+  width: 100% !important;
+  color: #000 !important;
+}
+.ant-transfer-list-header {
+  width: 100% !important;
+  color: #000 !important;
+}
+.ant-transfer-list {
+  width: 100% !important;
+}
+.ant-transfer-list-content-item {
+  width: 100% !important;
+}
+.ant-btn {
+  width: 100% !important;
+}
+/* span {
+  width: 100% !important;
+}
+li {
+  color: #000 !important;
+}
+ul {
+  width: 100% !important;
+} */
+.ant-transfer-list-body {
+  width: 100% !important;
+}
+/* svg {
+  width: 100% !important;
+} */
+.ant-btn-primary {
+  width: 100% !important;
+}
+

@@ -1,12 +1,8 @@
-import logo from "./logo.svg";
 import "./App.css";
 import Login from "./components/login";
-import { Route, Routes, Link, Navigate } from "react-router-dom";
-import Home from "./components/Home";
+import { Route, Routes } from "react-router-dom";
 import Sidebar from "./components/Sidebar";
-
 import Setting from "./components/Setting";
-import DeviceDisplay from "./components/DeviceDisplay";
 import Personal from "./components/Personal/Personal";
 import GlobalStyle from "./components/globarStyles";
 import Mainpage from "./components/Mainpage";
@@ -18,6 +14,9 @@ import QrcodeShow from "./components/Qrcode/QrcodeShow";
 import Devicetab from "./components/Device/Devicetab";
 import Log from "./components/log/Log";
 import Schedue from "./components/calendar/Calendar";
+import Devicegroup from "./components/Device/Devicegroup";
+import DevicegroupEdit from "./components/Device/DevicegroupEdit";
+import Roomcreate from "./components/HouseHold/Roomcreate";
 
 function App() {
   const MainContainer = () => (
@@ -56,6 +55,10 @@ function App() {
         <Route path="/qrcode" element={<Qrcode />} />
         <Route path="/log" element={<Log />} />
         <Route path="/schedue" element={<Schedue />} />
+        <Route path="/Devicegroup" element={<Devicegroup />} />
+        <Route path="/DevicegroupEdit/:id" element={<DevicegroupEdit />} />
+        <Route path="/Roomcreate" element={<Roomcreate/>} />
+        
       </Routes>
     </>
   );
@@ -65,7 +68,7 @@ function App() {
         <Route path="/*" element={<MainContainer />} />
         <Route exact path="/users/*" element={<LoginContainer />} />
         <Route path="/dashboard/*" element={<DefaultContainer />} />
-        <Route path="/publiclink/*" element={<PublicLink/>}/>
+        <Route path="/publiclink/*" element={<PublicLink />} />
       </Routes>
     </>
   );

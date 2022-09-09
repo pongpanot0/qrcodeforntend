@@ -20,7 +20,11 @@ import RoomTree from "./RoomTree";
 import axios from "axios";
 
 import MenuItem from "@mui/material/MenuItem";
-
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 import Select from "@mui/material/Select";
 const style = {
   position: "absolute",
@@ -34,14 +38,7 @@ const style = {
   px: 4,
   pb: 3,
 };
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  height: "100%",
-  color: theme.palette.text.secondary,
-}));
+
 const ariaLabel = { "aria-label": "description" };
 function Floor() {
   const [err, setError] = React.useState(false);
@@ -50,6 +47,7 @@ function Floor() {
   const [room_name, setroom_name] = React.useState("");
   const [building, setBuilding] = React.useState([]);
   const [code, setCode] = React.useState("");
+  const [fail, setfail] = React.useState(false);
   React.useEffect(() => {
     setError(true);
     const items = localStorage.getItem("company_id");
@@ -61,7 +59,6 @@ function Floor() {
       });
   }, []);
   const dateElement = building.map((row, i) => {
-    console.log(row);
     return <MenuItem value={row.id}>{row.name}</MenuItem>;
   });
   const createbuild = (e) => {
@@ -78,7 +75,11 @@ function Floor() {
       })
 
       .then((res) => {
+        if (res.data.code === 10000) {
+          setfail(true)
+        }
         if (res.data.code === 0) {
+          window.location.reload(false);
           setError(false);
         }
       })
@@ -117,6 +118,33 @@ function Floor() {
   };
   return (
     <>
+         {fail ? (
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"มีบางอย่างผิดพลาด"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText
+                    textAlign={"center"}
+                    id="alert-dialog-description"
+                  >
+                    ชื่อหรือเลขที่ห้องมีอยู่แล้ว
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button fullWidth onClick={handleClose} autoFocus>
+                    Agree
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            ) : (
+              <> </>
+            )}
       <Modal
         open={open}
         onClose={handleClose}

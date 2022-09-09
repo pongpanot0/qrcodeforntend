@@ -55,9 +55,7 @@ function a11yProps(index) {
 export default function Setting() {
   const [value, setValue] = React.useState(() => {
     const stickyValue = window.localStorage.getItem("keys");
-    return stickyValue !== null
-      ? JSON.parse(stickyValue)
-      : 0;
+    return stickyValue !== null ? JSON.parse(stickyValue) : 0;
   });
   const handleChange = (event, newValue) => {
     console.log(newValue);
@@ -83,16 +81,10 @@ export default function Setting() {
                   indicatorColor="secondary"
                 >
                   <Tab label="Building Unit" {...a11yProps(0)} />
-
-                  <Tab label="Room" {...a11yProps(1)} />
                 </Tabs>
               </Box>
               <TabPanel value={value} index={0}>
                 <Household />
-              </TabPanel>
-
-              <TabPanel value={value} index={1}>
-                <Room />
               </TabPanel>
             </Box>
           </Item>

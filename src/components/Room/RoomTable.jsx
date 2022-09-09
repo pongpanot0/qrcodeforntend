@@ -194,7 +194,7 @@ function stableSort(array, comparator) {
 
 export default function RoomTable() {
   const [order, setOrder] = React.useState("asc");
-  const [orderBy, setOrderBy] = React.useState('');
+  const [orderBy, setOrderBy] = React.useState("");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -208,20 +208,19 @@ export default function RoomTable() {
   const handleClose = () => setOpen(false);
   const Edit = (id) => {
     setOpen(true);
-
     setUUid(id);
   };
-  const Delete = (uuid) => {
+  const Delete = (id) => {
+    console.log('1234')
     setError(true);
     const items = localStorage.getItem("company_id");
     axios
-      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${uuid}`)
+      .delete(`${process.env.REACT_APP_API_KEY}/deleteroom/${items}/${id}`)
       .then((res) => {
         console.log(res.data);
         if (res.data.code === 0) {
           setError(false);
-          window.location.reload(false);
-          console.log(res.data.code);
+          getDate()
         }
       })
       .catch(function (error) {
@@ -231,6 +230,9 @@ export default function RoomTable() {
 
   React.useEffect(() => {
     setError(true);
+    getDate();
+  }, []);
+  const getDate = () => {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
@@ -242,7 +244,8 @@ export default function RoomTable() {
         setCount(res.data.data.totalCount);
         setError(false);
       });
-  }, []);
+  };
+
   const handleRequestSort = (event, id) => {
     const isAsc = orderBy === id && order === "asc";
     setOrder(isAsc ? "desc" : "asc");

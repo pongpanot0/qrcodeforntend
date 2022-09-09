@@ -12,41 +12,42 @@ const logout = () => {
 };
 export const SidebarData = [
   {
-    title: "Dashboard",
+    title: "มอนิเตอร์",
     path: "/dashboard",
     icon: <HomeIcon />,
     cName: "nav-text",
   },
   {
-    title: "Device",
+    title: "ตั้งค่าพื้นฐาน",
+    path: "/dashboard/Setting",
+    icon: <SettingsIcon />,
+    cName: "nav-text",
+  },
+  {
+    title: "อุปกรณ์",
     path: "/dashboard/DeviceDisplay",
     icon: <CastIcon />,
     cName: "nav-text",
   },
   {
-    title: "Personal",
+    title: "สมาชิก",
     path: "/dashboard/personal",
     icon: <PersonIcon />,
     cName: "nav-text",
   },
   {
-    title: "Qrcode",
+    title: "ผู้มาติดต่อ",
     path: "/dashboard/qrcode",
     icon: <PersonIcon />,
     cName: "nav-text",
   },
   {
-    title: "Log",
+    title: "บันทึกเหตุการณ์",
     path: "/dashboard/log",
     icon: <PersonIcon />,
     cName: "nav-text",
   },
-  {
-    title: "Setting",
-    path: "/dashboard/Setting",
-    icon: <SettingsIcon />,
-    cName: "nav-text",
-  },
+
   {
     title: "logout",
     path: "/users/login",

@@ -70,6 +70,7 @@ export default function Qrcode() {
       link.click();
     });
   };
+  const [visipeople,setvisipeople] = React.useState('')
   const createbuild = (e) => {
     e.preventDefault();
     const user_id = localStorage.getItem("user_id");
@@ -82,6 +83,7 @@ export default function Qrcode() {
         endDate: endDate,
         visitor_name: visitor_name,
         created_by: user_id,
+        visipeople:visipeople,
       })
 
       .then((res) => {
@@ -116,25 +118,42 @@ export default function Qrcode() {
                 aria-describedby="parent-modal-description"
               >
                 <Box sx={{ ...style, width: 650 }}>
-                  <h2 id="parent-modal-title">New Visitor</h2>
+                  <h2 id="parent-modal-title">ผู้มาติดต่อ</h2>
                   <br></br>
                   <hr></hr>
                   <br></br>
+                  <Grid container spacing={3}>
+                    <Grid item xs={6} sm={6} md={6}>
+                      <h4 id="parent-modal-description">ชื่อผู้มาติดต่อ</h4>
+                      <FormControl sx={{ m: 1, width: "100%" }}>
+                        <TextField
+                          id="outlined-basic"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          onChange={(e) => {
+                            setvisitor_name(e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                    </Grid>
 
-                  <h4 id="parent-modal-description">Visitor name</h4>
-                  <FormControl sx={{ m: 1, width: "100%" }}>
-                    <TextField
-                      id="outlined-basic"
-                      required
-                      fullWidth
-                      variant="outlined"
-                      onChange={(e) => {
-                        setvisitor_name(e.target.value);
-                      }}
-                    />
-                  </FormControl>
-
-                  <h4 id="parent-modal-description">Device name</h4>
+                    <Grid item xs={6} sm={6} md={6}>
+                      <h4 id="parent-modal-description">มาพบ</h4>
+                      <FormControl sx={{ m: 1, width: "100%" }}>
+                        <TextField
+                          id="outlined-basic"
+                          required
+                          fullWidth
+                          variant="outlined"
+                          onChange={(e) => {
+                            setvisipeople(e.target.value);
+                          }}
+                        />
+                      </FormControl>
+                    </Grid>
+                  </Grid>
+                  <h4 id="parent-modal-description">สิทธิ์การเข้าถึง</h4>
                   <FormControl sx={{ m: 1, width: "100%" }}>
                     <Autocomplete
                       value={value}
@@ -153,13 +172,13 @@ export default function Qrcode() {
                           fullWidth
                           {...params}
                           variant="outlined"
-                          label="Device"
+                          label="ชื่ออุปกรณ์"
                           placeholder="Search"
                         />
                       )}
                     />
                   </FormControl>
-              
+                  <h4 id="parent-modal-description">อนุญาติ</h4>
                   <FormControl sx={{ width: "100%" }}>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DateTimePicker
@@ -167,7 +186,7 @@ export default function Qrcode() {
                         renderInput={(props) => <TextField {...props} />}
                         inputFormat="dd/MM/yyyy HH:mm"
                         defaultValue={startDate}
-                        label="StartDate"
+                        label="เริ่มต้น"
                         value={startDate}
                         onChange={(newValue) => {
                           setstartDate(newValue);
@@ -176,14 +195,13 @@ export default function Qrcode() {
                     </LocalizationProvider>
                   </FormControl>
 
-            
                   <FormControl sx={{ width: "100%" }}>
                     <LocalizationProvider dateAdapter={AdapterDateFns}>
                       <DateTimePicker
                         ampm={false}
                         inputFormat="dd/MM/yyyy HH:mm"
                         renderInput={(props) => <TextField {...props} />}
-                        label="EndDate"
+                        label="สิ้นสุด"
                         value={endDate}
                         onChange={(newValue) => {
                           setendDate(newValue);
@@ -192,7 +210,7 @@ export default function Qrcode() {
                     </LocalizationProvider>
                   </FormControl>
 
-                  <h4 id="parent-modal-description">Usable times</h4>
+                  <h4 id="parent-modal-description">จำนวนครั้ง</h4>
                   <FormControl sx={{ m: 1, width: "100%" }}>
                     <TextField
                       id="outlined-basic"
@@ -212,14 +230,14 @@ export default function Qrcode() {
                   <br></br>
                   <Stack direction="row" spacing={2}>
                     <Button variant="contained" onClick={createbuild}>
-                      CreateQrcode
+                      สร้างรหัสผ่าน
                     </Button>
                     <Button
                       variant="contained"
                       color="error"
                       onClick={handleClose}
                     >
-                      Cancel
+                      ยกเลิก
                     </Button>
                   </Stack>
                 </Box>
@@ -228,14 +246,14 @@ export default function Qrcode() {
           </Box>
           <br></br>
           <Button variant="contained" onClick={handleOpen}>
-            Open
+            สร้างรหัส
           </Button>
           <Button
             variant="contained"
             onClick={getExcel}
             style={{ marginLeft: 5 }}
           >
-            exports
+            ส่งออก
           </Button>
           <QrcodeTable />
         </Grid>

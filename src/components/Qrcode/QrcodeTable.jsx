@@ -13,11 +13,11 @@ import TableSortLabel from "@mui/material/TableSortLabel";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
-import Checkbox from "@mui/material/Checkbox";
+
 import LinearProgress from "@mui/material/LinearProgress";
 import { visuallyHidden } from "@mui/utils";
 import axios from "axios";
-import { Button } from "@mui/material";
+
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
@@ -27,25 +27,25 @@ const headCells = [
     id: "visitor_name",
     numeric: false,
     disablePadding: true,
-    label: "visitor_name",
+    label: "ชื่อผู้มาติดต่อ",
   },
   {
     id: "device_devSn",
     numeric: true,
     disablePadding: false,
-    label: "device_devSn",
+    label: "S/N",
   },
   {
     id: "usableCount",
     numeric: true,
     disablePadding: false,
-    label: "usableCount",
+    label: "จำนวนครั้งการใช้งาน",
   },
   {
     id: "tempPwd",
     numeric: true,
     disablePadding: false,
-    label: "tempPwd",
+    label: "รหัสผ่าน",
   },
   {
     id: "Qrcode",
@@ -53,21 +53,14 @@ const headCells = [
     disablePadding: false,
     label: "Qrcode",
   },
-  {
-    id: "Action",
-    numeric: true,
-    disablePadding: false,
-    label: "Action",
-  },
+
 ];
 
 function EnhancedTableHead(props) {
   const {
-    onSelectAllClick,
+
     order,
     orderBy,
-    numSelected,
-    rowCount,
     onRequestSort,
   } = props;
   const createSortHandler = (property) => (event) => {
@@ -78,15 +71,7 @@ function EnhancedTableHead(props) {
     <TableHead>
       <TableRow>
         <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
+        
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
@@ -221,24 +206,6 @@ export default function QrcodeTable() {
         setError(false);
       });
   };
-  const Delete = (id) => {
-    console.log(getData);
-    setSuccess(true);
-    const items = localStorage.getItem("company_id");
-    axios
-      .delete(`${process.env.REACT_APP_API_KEY}/getVisitor/${items}`)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.code === 0) {
-          setSuccess(false);
-          window.location.reload(false);
-          console.log(res.data.code);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
 
   const handleRequestSort = (event, id) => {
     const isAsc = orderBy === id && order === "asc";
@@ -330,16 +297,7 @@ export default function QrcodeTable() {
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
-                        <Checkbox
-                          onClick={(event) =>
-                            handleClick(event, row.visitorlog_id)
-                          }
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
+                     
                       </TableCell>
                       <TableCell
                         component="th"
@@ -358,15 +316,6 @@ export default function QrcodeTable() {
                           alt={row.visitor_name}
                           src={`data:image/jpeg;base64,${row.qrcode}`}
                         />
-                      </TableCell>
-                      <TableCell align="right">
-                        <Button
-                          onClick={() => {
-                            Delete(row.devSn);
-                          }}
-                        >
-                          RemoveDevice
-                        </Button>
                       </TableCell>
                     </TableRow>
                   );
