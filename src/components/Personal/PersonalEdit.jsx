@@ -23,7 +23,7 @@ import FormGroup from "@mui/material/FormGroup";
 import Modal from "@mui/material/Modal";
 import Fileupload from "./Fileupload";
 import { Typography } from "antd";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 const style = {
   position: "absolute",
   top: "50%",
@@ -49,7 +49,7 @@ function PersonalEdit() {
   const [checked2, setChecked2] = React.useState(false);
   const [checked3, setChecked3] = React.useState(false);
   const [checked4, setChecked4] = React.useState(false);
-
+  const navigate = useNavigate()
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };
@@ -145,7 +145,7 @@ function PersonalEdit() {
           setOpen(false);
           setOpen2(false);
 
-          window.location.reload(false);
+          navigate('/dashboard/personal')
         }
         if (res.data.status === 400) {
           setOpen2(true);
