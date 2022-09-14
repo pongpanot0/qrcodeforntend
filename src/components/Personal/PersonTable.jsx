@@ -19,6 +19,7 @@ import { visuallyHidden } from "@mui/utils";
 import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
 import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
@@ -155,17 +156,7 @@ const EnhancedTableToolbar = (props) => {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  width: 400,
-  bgcolor: "background.paper",
-  border: "2px solid #000",
-  boxShadow: 24,
-  p: 4,
-};
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -191,7 +182,7 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
-export default function PersonTable() {
+export default function PersonTable({ Selec, Selec2 }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -208,22 +199,6 @@ export default function PersonTable() {
   const Edit = (id) => {
     setOpen(true);
     setUUid(id);
-  };
-  const Delete = (id) => {
-    setError(true);
-    axios
-      .delete(`${process.env.REACT_APP_API_KEY}/Deletepersonal/${id}`)
-      .then((res) => {
-        console.log(res.data.status);
-        if (res.data.status === 200) {
-          setError(false);
-          getDate();
-          console.log(res.data);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   };
 
   React.useEffect(() => {
@@ -254,9 +229,13 @@ export default function PersonTable() {
     if (event.target.checked) {
       const newSelected = room.map((n) => n.user_id);
       setSelected(newSelected);
+      Selec(newSelected);
+      Selec2(newSelected);
       return;
     }
+    Selec2([]);
     setSelected([]);
+    Selec([]);
   };
 
   const handleClick = (event, first_name) => {
@@ -275,8 +254,9 @@ export default function PersonTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-
+    Selec2(newSelected);
     setSelected(newSelected);
+    Selec(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -360,17 +340,9 @@ export default function PersonTable() {
 
                         <TableCell align="right" color="primary">
                           <Button
-                            onClick={() => {
-                              Delete(row.user_id);
-                            }}
-                          >
-                            Delete
-                          </Button>
-                          <Button
                             color="primary"
-                            onClick={() => {
-                              Edit(row.uuid);
-                            }}
+                           
+                            component={Link} to={"/dashboard/PersonalEdit/"+row.user_id}
                           >
                             Details
                           </Button>

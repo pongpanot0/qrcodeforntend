@@ -65,6 +65,8 @@ export default function Login() {
           localStorage.setItem("email", res.data.user[0].email);
           localStorage.setItem("company_id", res.data.user[0].company_id);
           localStorage.setItem("position", res.data.user[0].position);
+          localStorage.setItem("first_name", res.data.user[0].first_name);
+          localStorage.setItem("last_name", res.data.user[0].last_name);
 
           setTimeout(() => {
             setOpen(false);

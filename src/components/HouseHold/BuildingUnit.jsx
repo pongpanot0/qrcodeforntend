@@ -269,16 +269,8 @@ export default function BuildingUnit() {
               <Button variant="contained" onClick={handleOpen2}>
                 เพิ่มโซนสาขา
               </Button>
-              <Button
-                variant="contained"
-              
-                onClick={getExcel}
-                color="error"
-              >
+              <Button variant="contained" onClick={getExcel} color="error">
                 Export
-              </Button>
-              <Button variant="contained" color="error">
-                Delete
               </Button>
             </Stack>
           </Grid>

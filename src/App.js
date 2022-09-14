@@ -17,6 +17,7 @@ import Schedue from "./components/calendar/Calendar";
 import Devicegroup from "./components/Device/Devicegroup";
 import DevicegroupEdit from "./components/Device/DevicegroupEdit";
 import Roomcreate from "./components/HouseHold/Roomcreate";
+import PersonalEdit from "./components/Personal/PersonalEdit";
 
 function App() {
   const MainContainer = () => (
@@ -58,6 +59,7 @@ function App() {
         <Route path="/Devicegroup" element={<Devicegroup />} />
         <Route path="/DevicegroupEdit/:id" element={<DevicegroupEdit />} />
         <Route path="/Roomcreate" element={<Roomcreate/>} />
+        <Route path="/PersonalEdit/:id" element={<PersonalEdit/>} />
         
       </Routes>
     </>

@@ -25,15 +25,11 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
 
-const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
-  ...theme.typography.body2,
-  padding: theme.spacing(1),
-  textAlign: "center",
-  height: "100%",
-  color: theme.palette.text.secondary,
-}));
+import Select from "@mui/material/Select";
+
 const style = {
   position: "absolute",
   top: "50%",
@@ -46,31 +42,46 @@ const style = {
   px: 4,
   pb: 3,
 };
-const Root = styled("div")(({ theme }) => ({
-  width: "100%",
-  ...theme.typography.body2,
-  "& > :not(style) + :not(style)": {
-    marginTop: theme.spacing(2),
-  },
-}));
+
 const ariaLabel = { "aria-label": "description" };
 function Device() {
   const [devSn, setDevSn] = React.useState("");
   const [name, setName] = React.useState("");
-  const [create_by, setcreate_by] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [positionuuid, setpositionuuid] = React.useState("");
   const [accDoorNo, setaccDoorNo] = React.useState("");
   const [err, setErr] = React.useState(false);
   const [building, setBuilding] = React.useState([]);
   const [fail, setfail] = React.useState(false);
+  const [room2, setRoom2] = React.useState([]);
+  const deletemanypeople = (e) => {
+    const items = localStorage.getItem("company_id");
+    axios
+      .post(`${process.env.REACT_APP_API_KEY}/removemanyDevice/${items}`, {
+        id: room2,
+      })
+      .then((res) => {
+        window.location.reload(true);
+        console.log(res);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+
+  const Selec = (event) => {
+    setRoom2(event);
+  };
   const handleOpen = () => {
     setOpen(true);
   };
   const handleClose = () => {
     setOpen(false);
-    window.location.reload(false);
   };
+  const data = building.map((row) => {
+    return <MenuItem value={row.uuid}>{row.name}</MenuItem>;
+  });
+
   React.useEffect(() => {
     setErr(true);
     const items = localStorage.getItem("company_id");
@@ -91,13 +102,14 @@ function Device() {
       .post(`${process.env.REACT_APP_API_KEY}/createdevice/${items}`, {
         devSn: devSn,
         name: name,
-
+        positionuuids: positionuuid,
         create_by: user_id,
         accDoorNo: accDoorNo,
       })
       .then((res) => {
         if (res.data.code === 0) {
           handleClose();
+          setErr(false);
           window.location.reload(false);
         }
         if (res.data.status === 400) {
@@ -110,25 +122,7 @@ function Device() {
         console.log(error);
       });
   };
-  const getExcel = (e) => {
-    const items = localStorage.getItem("company_id");
-    setErr(true);
-    e.preventDefault();
-    axios({
-      url: `${process.env.REACT_APP_API_KEY}/getDevice/${items}`, //your url
-      method: "POST",
-      responseType: "blob", // important
-    }).then((response) => {
-      console.log(response);
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement("a");
-      link.href = url;
-      link.setAttribute("download", `Device${items}.xlsx`); //or any other extension
-      document.body.appendChild(link);
-      link.click();
-      setErr(false);
-    });
-  };
+
   const handleChange = (event) => {
     setpositionuuid(event.target.value);
   };
@@ -189,11 +183,12 @@ function Device() {
               <> </>
             )}
             <Grid
+            style={{color:'black'}}
               container
               rowSpacing={1}
               columnSpacing={{ xs: 1, sm: 1, md: 1 }}
             >
-              <Grid item xs={12}>
+              <Grid item xs={12} >
                 {" "}
                 <FormControl sx={{ m: 1, width: "100%" }}>
                   <div className="row" style={{ width: "100%" }}>
@@ -205,6 +200,7 @@ function Device() {
                         width="100%"
                         type="text"
                         id="fname"
+                    
                         fullWidth
                         name="firstname"
                         placeholder="Device SN"
@@ -261,6 +257,21 @@ function Device() {
                   <br></br>
                 </FormControl>
               </Grid>
+              <Grid item xs={12}>
+                <FormControl sx={{ m: 1, width: "100%" }}>
+                <InputLabel id="demo-simple-select-label">เรื่องสถานที่ติดตั้ง</InputLabel>
+                  <Select
+                  fullWidth
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    value={positionuuid}
+                    label="building"
+                    onChange={handleChange}
+                  >
+                    {data}
+                  </Select>
+                </FormControl>
+              </Grid>
             </Grid>
           </Box>
           <hr></hr>
@@ -313,18 +324,20 @@ function Device() {
               <Button variant="contained" onClick={handleOpen}>
                 เพิ่ม
               </Button>
-              <Button variant="contained" color="error">
+              <Button
+                onClick={deletemanypeople}
+                variant="contained"
+                color="error"
+              >
                 ลบ
               </Button>
-              <Button variant="contained" color="error">
-                แก้ไข
-              </Button>
+           
             </Stack>
           </Grid>
         </Grid>
         <Grid container spacing={2} columns={16} style={{ paddingTop: 10 }}>
           <Grid item md={16} xs={16}>
-            <DeviceTable />
+            <DeviceTable Selec={Selec} />
           </Grid>
         </Grid>
       </Box>

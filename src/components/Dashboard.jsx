@@ -22,33 +22,39 @@ export default function Dashboard() {
   const [buildingUnit, setBuildingUnit] = React.useState([]);
   const [room, setRoom] = React.useState([]);
   const [person, setPerson] = React.useState([]);
+  const [totalSum, setTotalSum] = React.useState(0);
   React.useEffect(() => {
     const items = localStorage.getItem("company_id");
     axios
-      .get(`${process.env.REACT_APP_API_KEY}/getDeviceLenght/${items}`)
+      .get(`${process.env.REACT_APP_API_KEY}/getVisitorlenght/${items}`)
       .then((res) => {
-        SetdeviceLengnt(res.data.totalCount);
-      });
-    axios
-      .get(`${process.env.REACT_APP_API_KEY}/getbuild/${items}`)
-      .then((res) => {
-        setBuildingUnit(res.data.data.data.totalCount);
+        SetdeviceLengnt(res.data.count);
       });
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getRoom/${items}`)
       .then((res) => {
-        console.log(res);
         setRoom(res.data.data.totalCount);
       });
     axios
       .get(`${process.env.REACT_APP_API_KEY}/getperson/${items}`)
       .then((res) => {
-        console.log(res);
-        setPerson(res.data.length);
+        console.log(res.data);
+        setPerson(res.data.data.length);
+      });
+
+    axios
+      .get(`${process.env.REACT_APP_API_KEY}/getdeviceuuid/${items}`)
+      .then((res) => {
+        console.log(res.data.data.list, "111");
+        setBuildingUnit(res.data.data.list);
+        const total = res.data.data.list.reduce(
+          (acc, row) => acc + row.connectionStatus,
+          0
+        );
+        setTotalSum(total);
       });
   }, []);
 
-  console.log(person);
   const Item = styled(Card)(({ theme }) => ({
     backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
     ...theme.typography.body2,
@@ -65,18 +71,20 @@ export default function Dashboard() {
           {" "}
           <Grid container spacing={2}>
             <Grid item xs={12} md={3}>
-              <Item>
+              <>
                 {" "}
                 <Card
                   sx={{
                     maxWidth: 345,
+                    textAlign: "center",
                     background:
-                      " linear-gradient(211deg, rgba(103,103,255,1) 0%, rgba(255,255,255,1) 100%);",
+                      " linear-gradient(rgb(248, 212, 154) -146.42%, rgb(255 202 113) -46.42%);",
+                    boxShadow: "0px 10px 20px 0px #F9D59B",
                   }}
                 >
                   <CardHeader
                     title="จำนวนสมาชิกทั้งหมด"
-                    subheader={"Employees"}
+                    subheader={"สมาชิก"}
                     variant="h6"
                     avatar={
                       <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -87,53 +95,56 @@ export default function Dashboard() {
 
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      {person} คน
+                      {person}
                     </Typography>
                   </CardContent>
                 </Card>
-              </Item>
+              </>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Item>
+              <>
                 {" "}
                 <Card
                   sx={{
                     maxWidth: 345,
                     background:
-                      " linear-gradient(211deg, rgba(255,215,103,1) 0%, rgba(255,255,255,1) 100%)",
+                      " linear-gradient(180deg, #bb67ff 0%, #c484f3 100%)",
+                    boxShadow: "0px 10px 20px 0px #c484f3",
+                    textAlign: "center",
                   }}
                 >
                   <CardHeader
-                    title="จำนวน Device ทั้งหมด"
-                    subheader={"Device"}
+                    title="จำนวน ผู้มาติดต่อในพื้นที่ ทั้งหมด"
+                    subheader={"ผู้มาติดต่อในพื้นที่"}
                     avatar={
                       <Avatar sx={{ bgcolor: blue[500] }} aria-label="recipe">
                         D
                       </Avatar>
                     }
                   />
-
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      {deviceLenght} ชิ้น
+                      {deviceLenght}
                     </Typography>
                   </CardContent>
                 </Card>
-              </Item>
+              </>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Item>
+              <>
                 {" "}
                 <Card
                   sx={{
                     maxWidth: 345,
+                    textAlign: "center",
                     background:
-                      " linear-gradient(211deg, rgba(255,76,0,1) 0%, rgba(221,221,221,1) 100%)",
+                      " linear-gradient(180deg, #FF919D 0%, #FC929D 100%)",
+                    boxShadow: "0px 10px 20px 0px #FC929D",
                   }}
                 >
                   <CardHeader
-                    title="จำนวน Building ทั้งหมด"
-                    subheader={"Building"}
+                    title="จำนวน ประตู ทั้งหมด"
+                    subheader={"โซนสาขา"}
                     style={{ fontSize: 50 }}
                     avatar={
                       <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
@@ -144,25 +155,27 @@ export default function Dashboard() {
 
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      {buildingUnit}
+                      {room}
                     </Typography>
                   </CardContent>
                 </Card>
-              </Item>
+              </>
             </Grid>
             <Grid item xs={12} md={3}>
-              <Item>
+              <>
                 {" "}
                 <Card
                   sx={{
                     maxWidth: 345,
-                    background:
-                      "   linear-gradient(241deg, rgba(88,255,152,1) 0%, rgba(221,221,221,1) 100%);",
+                    textAlign: "center",
+                    backGround:
+                      "linear-gradient(rgb(248, 212, 154) -146.42%, rgb(255 202 113) -46.42%)",
+                    boxShadow: "0px 10px 20px 0px black",
                   }}
                 >
                   <CardHeader
-                    title="จำนวน Room ทั้งหมด"
-                    subheader={"Room"}
+                    title="จำนวน ประตูออนไลน์ ทั้งหมด"
+                    subheader={"ประตูออนไลน์"}
                     avatar={
                       <Avatar sx={{ bgcolor: red[500] }} aria-label="recipe">
                         R
@@ -172,23 +185,20 @@ export default function Dashboard() {
 
                   <CardContent>
                     <Typography gutterBottom variant="h6" component="div">
-                      {room}
+                      {totalSum}
                     </Typography>
                   </CardContent>
                 </Card>
-              </Item>
+              </>
             </Grid>
             <Grid item xs={12} md={12}>
               <Item>
-              <Deviceshow/>
+                <Deviceshow />
               </Item>
             </Grid>
           </Grid>
         </Grid>
-        <Grid item xs={0} sm={2} md={2}>
- 
-        </Grid>
-        
+        <Grid item xs={0} sm={2} md={2}></Grid>
       </Grid>
     </Box>
   );

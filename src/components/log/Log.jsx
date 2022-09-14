@@ -5,12 +5,26 @@ import Box from "@mui/material/Box";
 
 import Grid from "@mui/material/Grid";
 import PropTypes from "prop-types";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
+
 import Typography from "@mui/material/Typography";
 import Logtable from "./Logtable";
 import { Button } from "@mui/material";
 import axios from "axios";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
+import Slide from "@mui/material/Slide";
+import TextField from "@mui/material/TextField";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import moment from "moment";
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
   ...theme.typography.body2,
@@ -46,6 +60,16 @@ TabPanel.propTypes = {
 };
 
 export default function Log() {
+  const [open, setOpen] = React.useState(false);
+  const [value2, setValue2] = React.useState(moment());
+  const [value3, setValue3] = React.useState(moment());
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  console.log(value3._d);
+  const handleClose = () => {
+    setOpen(false);
+  };
   const [value, setValue] = React.useState(() => {
     const stickyValue = window.localStorage.getItem("keys");
     return stickyValue !== null ? JSON.parse(stickyValue) : 0;
@@ -73,6 +97,27 @@ export default function Log() {
       link.click();
     });
   };
+  const exportslogdevicewithdate = (e) => {
+    const items = localStorage.getItem("company_id");
+
+    e.preventDefault();
+    axios(
+      {
+        url: `${process.env.REACT_APP_API_KEY}/exportslogdevicewithdate/${items}/${value2}/${value3}`, //your url
+        method: "POST",
+        responseType: "blob", // important
+      },
+    ).then((response) => {
+      console.log(response);
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", `Log${items}.xlsx`); //or any other extension
+      document.body.appendChild(link);
+      link.click();
+    });
+  };
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={3}>
@@ -84,6 +129,65 @@ export default function Log() {
               <Button variant="contained" color="error" onClick={getExcel}>
                 Export
               </Button>
+              <Button
+                style={{ marginLeft: 5 }}
+                variant="contained"
+                color="error"
+                onClick={handleClickOpen}
+              >
+                Exportแบบเลือกวัน
+              </Button>
+              <div>
+                <Dialog
+                  open={open}
+                  TransitionComponent={Transition}
+                  keepMounted
+                  onClose={handleClose}
+                  aria-describedby="alert-dialog-slide-description"
+                >
+                  <DialogTitle>{"ออกรายงานแบบเลือกเอง"}</DialogTitle>
+                  <DialogContent>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        views={["year", "month", "day"]}
+                        value={value2}
+                        inputFormat="DD/MM/YYYY"
+                        onChange={(newValue) => {
+                          setValue2(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            {...params}
+                            helperText={"วันที่เริ่มต้น"}
+                          />
+                        )}
+                      />
+                    </LocalizationProvider>
+                    <LocalizationProvider dateAdapter={AdapterDayjs}>
+                      <DatePicker
+                        views={["year", "month", "day"]}
+                        value={value3}
+                        inputFormat="DD/MM/YYYY"
+                      
+                        onChange={(newValue) => {
+                          console.log(newValue)
+                          setValue3(newValue);
+                        }}
+                        renderInput={(params) => (
+                          <TextField
+                            style={{ marginLeft: 5 }}
+                            {...params}
+                            helperText={"วันที่สิ้นสุด"}
+                          />
+                        )}
+                      />
+                    </LocalizationProvider>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={exportslogdevicewithdate}>Export</Button>
+                  </DialogActions>
+                </Dialog>
+              </div>
               <Logtable />
             </Box>
           </Item>

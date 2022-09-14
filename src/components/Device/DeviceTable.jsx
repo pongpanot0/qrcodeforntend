@@ -180,7 +180,7 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
-export default function DeviceTable() {
+export default function DeviceTable({ Selec }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
@@ -210,24 +210,7 @@ export default function DeviceTable() {
         setError(false);
       });
   };
-  const Delete = (id) => {
-    console.log(getData);
-    setSuccess(true);
-    const items = localStorage.getItem("company_id");
-    axios
-      .delete(`${process.env.REACT_APP_API_KEY}/removeDevice/${items}/${id}`)
-      .then((res) => {
-        console.log(res.data);
-        if (res.data.code === 0) {
-          setSuccess(false);
-          getData();
-          console.log(res.data.code);
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  };
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -239,9 +222,11 @@ export default function DeviceTable() {
     if (event.target.checked) {
       const newSelected = device.map((n) => n.name);
       setSelected(newSelected);
+      Selec(newSelected);
       return;
     }
     setSelected([]);
+    Selec([]);
   };
 
   const handleClick = (event, name) => {
@@ -260,7 +245,7 @@ export default function DeviceTable() {
         selected.slice(selectedIndex + 1)
       );
     }
-
+    Selec(newSelected);
     setSelected(newSelected);
   };
 
@@ -306,17 +291,17 @@ export default function DeviceTable() {
               {stableSort(device, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row.devSn);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row.devSn)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row.devSn}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -341,7 +326,6 @@ export default function DeviceTable() {
                         {row.positionFullName}
                       </TableCell>
                       <TableCell align="right">{row.deviceModelName}</TableCell>
-                   
                     </TableRow>
                   );
                 })}
