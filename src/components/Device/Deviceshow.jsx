@@ -61,44 +61,54 @@ function Deviceshow() {
       <Box sx={{ width: "100%" }}>
         <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           {device.map((item, index) => {
-         const Rong = ()=>{
-          if (item.connectionStatus === 1) {
-            return <ImageListItemBar
-              key={index}
-              title={item.name}
-              className='second'
-              style={
-                shouldHaveWidthSetting
-                  ? { border: "2px solid green" }
-                  : undefined
+            const Rong = () => {
+              if (item.connectionStatus === 1) {
+                return (
+                  <ImageListItemBar
+                    key={index}
+                    title={item.name}
+                    className="second"
+                    style={
+                      shouldHaveWidthSetting
+                        ? { border: "2px solid green" }
+                        : undefined
+                    }
+                    subtitle={
+                      <Button
+                        variant="contained"
+                        onClick={() => Opendoor(item.devSn)}
+                      >
+                        กดเพื่อเปิดประตู
+                      </Button>
+                    }
+                  />
+                );
               }
-              subtitle={
-                <Button onClick={() => Opendoor(item.devSn)}>
-                  กดเพื่อเปิดประตู
-                </Button>
+              if (item.connectionStatus === 0) {
+                return (
+                  <ImageListItemBar
+                    key={index}
+                    title={item.name}
+                    className="first"
+                    style={
+                      shouldHaveWidthSetting
+                        ? { border: "2px solid green", backgroundColor: "red" }
+                        : undefined
+                    }
+                    subtitle={
+                      <Button
+                       style={{color:'white'}}
+                        disabled
+                        variant="outlined"
+                        onClick={() => Opendoor(item.devSn)}
+                      >
+                        ประตูของคุณ Offline อยู่
+                      </Button>
+                    }
+                  />
+                );
               }
-            />;
-          
-          }
-          if (item.connectionStatus === 0) {
-            return <ImageListItemBar
-              key={index}
-              title={item.name}
-              className="first"
-              style={
-                shouldHaveWidthSetting
-                  ? { border: "2px solid green" }
-                  : undefined
-              }
-              subtitle={
-                <Button onClick={() => Opendoor(item.devSn)}>
-                  กดเพื่อเปิดประตู
-                </Button>
-              }
-            />;
-          }
-
-        }
+            };
 
             return (
               <Grid item xs={2}>
@@ -119,7 +129,7 @@ function Deviceshow() {
                       alt={item.name}
                       loading="eager"
                     />
-                 <Rong/>
+                    <Rong />
                   </ImageListItem>
                 </Item>
               </Grid>

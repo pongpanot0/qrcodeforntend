@@ -1,6 +1,7 @@
 .first{
-    border: 2px solid red;
+    background-color: rgb(145, 0, 0)!important;
+    color: black!important;
 }
 .second{
-    border: 2px solid red;
+    border: 2px solid green;
 }
