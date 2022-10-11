@@ -51,6 +51,7 @@ function Personal() {
   const [room2, setRoom2] = React.useState("");
   const [room3, setRoom3] = React.useState("");
   const [open6, setOpen6] = React.useState(false);
+  const [open7, setOpen7] = React.useState(false);
 
   console.log(room3);
   const Selec2 = (event) => {
@@ -77,6 +78,7 @@ function Personal() {
     setOpen3(false);
     setOpen4(false);
     setOpen6(false);
+    setOpen7(false);
   };
   const [open3, setOpen3] = React.useState(false);
   const [open4, setOpen4] = React.useState(false);
@@ -88,6 +90,9 @@ function Personal() {
   };
   const handleOpen = () => {
     setOpen3(true);
+  };
+  const handleOpen7 = () => {
+    setOpen7(true);
   };
   const deletemanypeople = (e) => {
     setError(true);
@@ -132,7 +137,37 @@ function Personal() {
       setError(false);
     });
   };
-
+  const [departmentname, setdepartmentname] = React.useState("");
+  const [departmentseq, setdepartmentseq] = React.useState("");
+  const creategroup = () => {
+    setError(true);
+    setOpen(true);
+    const user_id = localStorage.getItem("user_id");
+    const items = localStorage.getItem("company_id");
+    axios
+      .post(`${process.env.REACT_APP_API_KEY}/createdepartment`, {
+        department_name: departmentname,
+        department_req: departmentseq,
+        created_by: user_id,
+        updated_by: user_id,
+        company_id: items,
+      })
+      .then((res) => {
+        if (res.data.status === 200) {
+          setOpen(false);
+          setOpen(false);
+          setOpen2(false);
+          setOpen3(false);
+          window.location.reload(false);
+        }
+        if (res.data.status === 400) {
+          setOpen2(true);
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
   const createpersonal = () => {
     setError(true);
     setOpen(true);
@@ -198,10 +233,10 @@ function Personal() {
   return (
     <>
       {" "}
-      <Box sx={{ flexGrow: 1 }}>
+      <Box fullWidth>
         <Grid container spacing={3}>
           <Grid item xs={0} sm={2} md={2}></Grid>
-          <Grid item xs={12} sm={8} md={8}>
+          <Grid item xs={12} sm={8} md={12}>
             <Modal
               open={open4}
               onClose={handleClose}
@@ -489,6 +524,7 @@ function Personal() {
                 <br></br>
               </Box>
             </Modal>
+            {/* Group */}
             <Modal
               open={open6}
               onClose={handleClose}
@@ -528,7 +564,7 @@ function Personal() {
                   <Grid item xs={12} sm={12} md={12}>
                     {" "}
                     <h1>เปิดประตูด้วย</h1>
-                    <Grid  xs={12} sm={12} md={12}>
+                    <Grid xs={12} sm={12} md={12}>
                       <FormControl
                         component="fieldset"
                         variant="standard"
@@ -550,7 +586,7 @@ function Personal() {
                         </FormGroup>
                       </FormControl>
                     </Grid>
-                    <Grid  xs={12} sm={12} md={12}>
+                    <Grid xs={12} sm={12} md={12}>
                       <FormControl component="fieldset" variant="standard">
                         <FormGroup>
                           <FormControlLabel
@@ -568,50 +604,50 @@ function Personal() {
                         </FormGroup>
                       </FormControl>
                     </Grid>
-                    <Grid  xs={12} sm={12} md={12}>
-                    <FormControl component="fieldset" variant="standard">
-                      <FormGroup>
-                        <FormControlLabel
-                          style={{ marginTop: 50 }}
-                          control={
-                            <Switch
-                              fullWidth
-                              checked={checked3}
-                              onChange={handleChange3}
-                              inputProps={{ "aria-label": "controlled" }}
-                            />
-                          }
-                          label={<Typography>ใช้งานด้วยรหัสผ่าน</Typography>}
-                        />
-                      </FormGroup>
-                    </FormControl>
+                    <Grid xs={12} sm={12} md={12}>
+                      <FormControl component="fieldset" variant="standard">
+                        <FormGroup>
+                          <FormControlLabel
+                            style={{ marginTop: 50 }}
+                            control={
+                              <Switch
+                                fullWidth
+                                checked={checked3}
+                                onChange={handleChange3}
+                                inputProps={{ "aria-label": "controlled" }}
+                              />
+                            }
+                            label={<Typography>ใช้งานด้วยรหัสผ่าน</Typography>}
+                          />
+                        </FormGroup>
+                      </FormControl>
                     </Grid>
-                    <Grid  xs={12} sm={12} md={12}>
-                    <FormControl component="fieldset" variant="standard">
-                      <FormGroup>
-                        <FormControlLabel
-                          style={{ marginTop: 50 }}
-                          control={
-                            <Switch
-                              fullWidth
-                              checked={checked4}
-                              onChange={handleChange4}
-                              inputProps={{ "aria-label": "controlled" }}
-                            />
-                          }
-                          label={
-                            <Typography
-                              style={{
-                                color: "black",
-                                opacity: 100,
-                              }}
-                            >
-                              ใช้งานด้วยบูลทูธ
-                            </Typography>
-                          }
-                        />
-                      </FormGroup>
-                    </FormControl>
+                    <Grid xs={12} sm={12} md={12}>
+                      <FormControl component="fieldset" variant="standard">
+                        <FormGroup>
+                          <FormControlLabel
+                            style={{ marginTop: 50 }}
+                            control={
+                              <Switch
+                                fullWidth
+                                checked={checked4}
+                                onChange={handleChange4}
+                                inputProps={{ "aria-label": "controlled" }}
+                              />
+                            }
+                            label={
+                              <Typography
+                                style={{
+                                  color: "black",
+                                  opacity: 100,
+                                }}
+                              >
+                                ใช้งานด้วยบูลทูธ
+                              </Typography>
+                            }
+                          />
+                        </FormGroup>
+                      </FormControl>
                     </Grid>
                   </Grid>
 

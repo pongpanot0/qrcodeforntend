@@ -18,6 +18,14 @@ import Devicegroup from "./components/Device/Devicegroup";
 import DevicegroupEdit from "./components/Device/DevicegroupEdit";
 import Roomcreate from "./components/HouseHold/Roomcreate";
 import PersonalEdit from "./components/Personal/PersonalEdit";
+import Persontab from "./components/Personal/Persontab";
+import DeviceEdit from "./components/Device/DeviceEdit";
+import Timeprofile from "./components/Personal/Timeprofile";
+import Departmenttable from "./components/Department/Departmenttable";
+import Department from "./components/Department/Department";
+import DepartmentDetail from "./components/Department/DepartmentDetail";
+import Timeprofiletable from "./components/Personal/Timeprofiletable";
+import Timeprofileedit from "./components/Personal/Timeprofileedit";
 
 function App() {
   const MainContainer = () => (
@@ -52,7 +60,7 @@ function App() {
         <Route exact path="/" element={<Dashboard />} />
         <Route path="/DeviceDisplay" element={<Devicetab />} />
         <Route path="/Setting" element={<Setting />} />
-        <Route path="/personal" element={<Personal />} />
+        <Route path="/personal" element={<Persontab />} />
         <Route path="/qrcode" element={<Qrcode />} />
         <Route path="/log" element={<Log />} />
         <Route path="/schedue" element={<Schedue />} />
@@ -60,7 +68,12 @@ function App() {
         <Route path="/DevicegroupEdit/:id" element={<DevicegroupEdit />} />
         <Route path="/Roomcreate" element={<Roomcreate/>} />
         <Route path="/PersonalEdit/:id" element={<PersonalEdit/>} />
-        
+        <Route path="/DeviceEdit/:id" element={<DeviceEdit/>} />
+        <Route path="/timeprofile" element={<Timeprofile/>} />
+        <Route path="/department" element={<Department/>} />
+        <Route path="/DepartmentDetail/:id" element={<DepartmentDetail/>} />
+        <Route path="/Timeprofiletable" element={<Timeprofiletable/>} />
+        <Route path="/timeprofileedit/:id" element={<Timeprofileedit/>} />
       </Routes>
     </>
   );

@@ -53,6 +53,7 @@ function Device() {
   const [err, setErr] = React.useState(false);
   const [building, setBuilding] = React.useState([]);
   const [fail, setfail] = React.useState(false);
+  const [fail2, setfail2] = React.useState(false);
   const [room2, setRoom2] = React.useState([]);
   const deletemanypeople = (e) => {
     const items = localStorage.getItem("company_id");
@@ -75,11 +76,15 @@ function Device() {
   const handleOpen = () => {
     setOpen(true);
   };
+  const handleRefresh =() =>{
+    window.location.reload(false);
+  }
   const handleClose = () => {
     setOpen(false);
+
   };
   const data = building.map((row) => {
-    return <MenuItem value={row.uuid}>{row.name}</MenuItem>;
+    return <MenuItem value={row.id}>{row.name}</MenuItem>;
   });
 
   React.useEffect(() => {
@@ -107,6 +112,7 @@ function Device() {
         accDoorNo: accDoorNo,
       })
       .then((res) => {
+        console.log(res)
         if (res.data.code === 0) {
           handleClose();
           setErr(false);
@@ -115,6 +121,14 @@ function Device() {
         if (res.data.status === 400) {
           setErr(false);
           setfail(true);
+     
+          
+          console.log("มี Device อยู๋แล้ว");
+        }
+        if (res.data.status === 401) {
+          setErr(false);
+          setfail2(true);
+          
           console.log("มี Device อยู๋แล้ว");
         }
       })
@@ -174,8 +188,35 @@ function Device() {
                   </DialogContentText>
                 </DialogContent>
                 <DialogActions>
-                  <Button fullWidth onClick={handleClose} autoFocus>
-                    Agree
+                  <Button fullWidth onClick={handleRefresh} autoFocus>
+                    ตกลง
+                  </Button>
+                </DialogActions>
+              </Dialog>
+            ) : (
+              <> </>
+            )}
+                    {fail2 ? (
+              <Dialog
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+              >
+                <DialogTitle id="alert-dialog-title">
+                  {"มีบางอย่างผิดพลาด"}
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText
+                    textAlign={"center"}
+                    id="alert-dialog-description"
+                  >
+                   มีบางอย่างผิดพลาด
+                  </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                  <Button fullWidth onClick={handleRefresh} autoFocus>
+                    ตกลง
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -237,29 +278,7 @@ function Device() {
               </Grid>
               <Grid item xs={12}>
                 <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div className="row" style={{ width: "100%" }}>
-                    <div className="col-25">
-                      <label for="fname">DoorNumber</label>
-                    </div>
-                    <div className="col-75">
-                      <TextField
-                        type="text"
-                        id="fname"
-                        name="firstname"
-                        placeholder="DoorNumber"
-                        fullWidth
-                        onChange={(e) => {
-                          setaccDoorNo(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-                </FormControl>
-              </Grid>
-              <Grid item xs={12}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                <InputLabel id="demo-simple-select-label">เรื่องสถานที่ติดตั้ง</InputLabel>
+                <InputLabel id="demo-simple-select-label">เลือกสถานที่ติดตั้ง</InputLabel>
                   <Select
                   fullWidth
                     labelId="demo-simple-select-label"
@@ -278,10 +297,10 @@ function Device() {
           <br />
           <Stack direction="row" spacing={2}>
             <Button variant="contained" onClick={createDevice}>
-              Submit
+              ตกลง
             </Button>
             <Button variant="outlined" onClick={handleClose}>
-              Close
+              ยกเลิก
             </Button>
           </Stack>
         </Box>

@@ -81,6 +81,7 @@ export default function BuildingUnit() {
   };
   const handleClose = () => {
     setOpen(false);
+    setOpen3(false);
   };
   const getExcel = (e) => {
     const items = localStorage.getItem("company_id");
@@ -131,7 +132,7 @@ export default function BuildingUnit() {
               </DialogContent>
               <DialogActions>
                 <Button fullWidth onClick={handleClose} autoFocus>
-                  Agree
+                  ตกลง
                 </Button>
               </DialogActions>
             </Dialog>
@@ -151,7 +152,7 @@ export default function BuildingUnit() {
           ) : (
             <> </>
           )}
-          <h2 id="parent-modal-title">New unit</h2>
+          <h2 id="parent-modal-title">เพิ่มโซน</h2>
           <br></br>
           <hr></hr>
           <br></br>
@@ -166,7 +167,7 @@ export default function BuildingUnit() {
                 <FormControl sx={{ m: 1, width: "100%" }}>
                   <div className="row" style={{ width: "100%" }}>
                     <div className="col-25">
-                      <label for="fname">ชื่อตึก</label>
+                      <label for="fname">ชื่อโซน</label>
                     </div>
                     <div className="col-50">
                       <TextField
@@ -184,38 +185,17 @@ export default function BuildingUnit() {
                   <br></br>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div className="row" style={{ width: "100%" }}>
-                    <div className="col-25">
-                      <label for="fname">Door number</label>
-                    </div>
-                    <div className="col-75">
-                      <TextField
-                        type="number"
-                        id="fname"
-                        name="ใส่ได้เฉพาะตัวเลข"
-                        placeholder="ใส่ได้เฉพาะตัวเลข"
-                        fullWidth
-                        onChange={(e) => {
-                          setCode(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-                </FormControl>
-              </Grid>
+           
             </Grid>
           </Box>
           <hr></hr>
           <br />
           <Stack direction="row" spacing={2}>
             <Button variant="contained" onClick={createbuild}>
-              Submit
+              ตกลง
             </Button>
             <Button variant="outlined" onClick={handleClose}>
-              Cancel
+              ยกเลิก
             </Button>
           </Stack>
         </Box>
@@ -266,12 +246,16 @@ export default function BuildingUnit() {
               <Button variant="contained" onClick={handleOpen}>
                 เพิ่มโซน
               </Button>
-              <Button variant="contained" onClick={handleOpen2}>
+              <Button
+                variant="contained"
+                onClick={handleOpen2}
+                onClose={handleClose}
+              >
                 เพิ่มโซนสาขา
               </Button>
-              <Button variant="contained" onClick={getExcel} color="error">
-                Export
-              </Button>
+              {/*      <Button variant="contained" color="error">
+                แก้ไข
+              </Button> */}
             </Stack>
           </Grid>
 

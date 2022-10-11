@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-
+import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
 import { SidebarData } from "./sidebardata";
@@ -9,7 +9,11 @@ import { styled } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import Avatar from "@mui/material/Avatar";
 import Stack from "@mui/material/Stack";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { useNavigate } from "react-router-dom";
 import Typography from "@mui/material/Typography";
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
     backgroundColor: "#44b700",
@@ -46,6 +50,7 @@ const SmallAvatar = styled(Avatar)(({ theme }) => ({
 }));
 
 function Sidebar() {
+  const navigate = useNavigate()
   const [last_name, setLast_Name] = useState("");
   const [first_name, setFirest_name] = useState("");
   React.useEffect(() => {
@@ -53,7 +58,18 @@ function Sidebar() {
     setFirest_name(localStorage.getItem("first_name"));
   });
   const [sidebar, setSidebar] = useState(false);
-
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const logout = () => {
+    localStorage.clear();
+    navigate('/users/login')
+  };
   const showSidebar = () => setSidebar(!sidebar);
   return (
     <>
@@ -75,8 +91,31 @@ function Sidebar() {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           variant="dot"
         >
-          <Avatar alt="Remy Sharp" src="/static/images/avatar/1.jpg" />
+          <IconButton
+            color="primary"
+            aria-label="upload picture"
+            component="label"
+            id="basic-button"
+            aria-controls={open ? "basic-menu" : undefined}
+            aria-haspopup="true"
+            aria-expanded={open ? "true" : undefined}
+            onClick={handleClick}
+          >
+          <AccountCircleIcon sx={{ fontSize: 40 }}/>
+          </IconButton>
         </StyledBadge>
+
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={logout}>Logout</MenuItem>
+        </Menu>
       </div>
       <nav className={sidebar ? "nav-menu active" : "nav-menu"}>
         <ul className="nav-menu-items" onClick={showSidebar}>

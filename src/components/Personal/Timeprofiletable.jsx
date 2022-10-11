@@ -14,40 +14,34 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import LinearProgress from "@mui/material/LinearProgress";
+
 import { visuallyHidden } from "@mui/utils";
+import LinearProgress from "@mui/material/LinearProgress";
 import axios from "axios";
-import { Button, Modal } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import { Button } from "@mui/material";
 import { Link } from "react-router-dom";
+
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 
 const headCells = [
   {
-    id: "name",
+    id: "Index",
     numeric: false,
     disablePadding: true,
-    label: "ชื่อ",
+    label: "ลำดับ",
   },
   {
-    id: "devSn",
+    id: "timeprofilename",
     numeric: true,
     disablePadding: false,
-    label: "S/N",
+    label: "timeprofilename",
   },
   {
-    id: "positionFullName",
+    id: "Action",
     numeric: true,
     disablePadding: false,
-    label: "โซน",
-  },
-  {
-    id: "deviceModelName",
-    numeric: true,
-    disablePadding: false,
-    label: "รุ่น",
+    label: "Action",
   },
 ];
 
@@ -146,7 +140,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          อุปกรณ์
+          Timeprofile
         </Typography>
       )}
     </Toolbar>
@@ -156,6 +150,7 @@ const EnhancedTableToolbar = (props) => {
 EnhancedTableToolbar.propTypes = {
   numSelected: PropTypes.number.isRequired,
 };
+
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -181,60 +176,68 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
-export default function DeviceTable({ Selec }) {
+export default function Timeprofiletable({ Selec, Selec2 }) {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [room, setRoom] = React.useState([]);
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
-  const [device, setDevice] = React.useState([]);
-  const [success, setSuccess] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [uuid, setUUid] = React.useState("");
+
+  const Edit = (id) => {
+    setOpen(true);
+    setUUid(id);
+  };
+
   React.useEffect(() => {
     setError(true);
-    getData();
+    getDate();
   }, []);
-  const getData = (event) => {
+  const getDate = () => {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
     }
     axios
-      .get(`${process.env.REACT_APP_API_KEY}/getdeviceuuid/${items}`)
+      .get(`${process.env.REACT_APP_API_KEY}/getTimeprofile/${items}`)
       .then((res) => {
-        console.log(res.data.data.list, "111");
-        setDevice(res.data.data.list);
-        setCount(res.data.data.totalCount);
+        console.log(res.data);
+        setRoom(res.data.data);
+        setCount(res.data.data.length);
         setError(false);
       });
   };
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === "asc";
+  const handleRequestSort = (event, id) => {
+    const isAsc = orderBy === id && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+    setOrderBy(id);
   };
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = device.map((n) => n.name);
+      const newSelected = room.map((n) => n.timeprofile_id);
       setSelected(newSelected);
       Selec(newSelected);
+      Selec2(newSelected);
       return;
     }
+    Selec2([]);
     setSelected([]);
     Selec([]);
   };
 
-  const handleClick = (event, name) => {
-    const selectedIndex = selected.indexOf(name);
+  const handleClick = (event, timeprofile_id) => {
+    const selectedIndex = selected.indexOf(timeprofile_id);
     let newSelected = [];
 
     if (selectedIndex === -1) {
-      newSelected = newSelected.concat(selected, name);
+      newSelected = newSelected.concat(selected, timeprofile_id);
     } else if (selectedIndex === 0) {
       newSelected = newSelected.concat(selected.slice(1));
     } else if (selectedIndex === selected.length - 1) {
@@ -245,8 +248,9 @@ export default function DeviceTable({ Selec }) {
         selected.slice(selectedIndex + 1)
       );
     }
-    Selec(newSelected);
+    Selec2(newSelected);
     setSelected(newSelected);
+    Selec(newSelected);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -258,101 +262,119 @@ export default function DeviceTable({ Selec }) {
     setPage(0);
   };
 
-  const isSelected = (name) => selected.indexOf(name) !== -1;
+  const isSelected = (mobile) => selected.indexOf(mobile) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - count) : 0;
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - room.length) : 0;
 
   return (
-    <Box sx={{ width: "100%" }}>
+    <>
       {err ? <LinearProgress /> : <> </>}
-      {success ? <LinearProgress /> : <></>}
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={count}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
+      <Box sx={{ width: "100%" }}>
+        <Button
+          style={{ float: "left" }}
+          variant="contained"
+          component={Link}
+          to="/dashboard/timeprofile"
+        >
+          เพิ่ม
+        </Button>
+        <Paper sx={{ width: "100%", mb: 2 }}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={count}
+              />
+              <TableBody>
+                {/* if you don't need to support IE11, you can replace the `stableSort` call with:
                  rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(device, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.devSn);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+                {stableSort(room, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.timeprofile_id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.devSn)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.devSn}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.timeprofile_id}
+                        selected={isItemSelected}
                       >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.devSn}</TableCell>
-                      <TableCell align="right">
-                        {row.positionFullName}
-                      </TableCell>
-                      <TableCell align="right">{row.deviceModelName}</TableCell>
-                      <TableCell align="right">
-                        <Button variant="contained" component={Link} to={`/dashboard/DeviceEdit/${row.devSn}`}>แก้ไข</Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={(event) =>
+                              handleClick(event, row.timeprofile_id)
+                            }
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {index + 1}
+                        </TableCell>
+                        <TableCell align="right">
+                          {row.timeprofile_name}
+                        </TableCell>
+
+                        <TableCell align="right" color="primary">
+                          <Button
+                            color="primary"
+                            component={Link}
+                            to={
+                              "/dashboard/Timeprofileedit/" + row.timeprofile_id
+                            }
+                          >
+                            Edit
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: (dense ? 33 : 53) * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+      </Box>
+    </>
   );
 }

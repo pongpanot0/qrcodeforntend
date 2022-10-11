@@ -32,11 +32,18 @@ const headCells = [
     label: "การใช้งาน",
   },
   {
+    id: "groupuser_name",
+    numeric: true,
+    disablePadding: false,
+    label: "กลุ่ม",
+  },
+  {
     id: "first_name",
     numeric: true,
     disablePadding: false,
     label: "ชื่อ",
   },
+
   {
     id: "last_name",
     numeric: true,
@@ -335,14 +342,15 @@ export default function PersonTable({ Selec, Selec2 }) {
                         >
                           {row.mobile}
                         </TableCell>
+                        <TableCell  align="right">{row.groupuser_name}</TableCell>
                         <TableCell align="right">{row.first_name}</TableCell>
                         <TableCell align="right">{row.last_name}</TableCell>
 
                         <TableCell align="right" color="primary">
                           <Button
                             color="primary"
-                           
-                            component={Link} to={"/dashboard/PersonalEdit/"+row.user_id}
+                            component={Link}
+                            to={"/dashboard/PersonalEdit/" + row.user_id}
                           >
                             Details
                           </Button>

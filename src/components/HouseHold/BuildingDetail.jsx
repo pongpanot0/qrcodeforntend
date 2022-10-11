@@ -64,7 +64,7 @@ function BuildingDetail(setUUid) {
          
         </>
       )}
-      <h2 id="parent-modal-title">New unit</h2>
+      <h2 id="parent-modal-title">เพิ่มโซน</h2>
       <br></br>
       <hr></hr>
       <br></br>
@@ -75,7 +75,7 @@ function BuildingDetail(setUUid) {
             <FormControl sx={{ m: 1, width: "100%" }}>
               <div className="row" style={{ width: "100%" }}>
                 <div className="col-25">
-                  <label for="fname"> ชื่อตึก</label>
+                  <label for="fname"> ชื่อโซน</label>
                 </div>
                 <div className="col-50">
                   <TextField
@@ -83,7 +83,7 @@ function BuildingDetail(setUUid) {
                     fullWidth
                     id="fname"
                     name="firstname"
-                    placeholder="Your name.."
+                    placeholder="ชื่อโซน"
                     value={name}
                     onChange={(e) => {
                       setName(e.target.value);
@@ -98,7 +98,7 @@ function BuildingDetail(setUUid) {
             <FormControl sx={{ m: 1, width: "100%" }}>
               <div className="row" style={{ width: "100%" }}>
                 <div className="col-25">
-                  <label for="fname">Door number</label>
+                  <label for="fname">ประตูที่</label>
                 </div>
                 <div className="col-75">
                   <TextField
@@ -122,8 +122,8 @@ function BuildingDetail(setUUid) {
       <hr></hr>
       <br />
       <Stack direction="row" spacing={2}>
-        <Button variant="contained">Submit</Button>
-        <Button variant="outlined" onClick={handleClose}>Cancel</Button>
+        <Button variant="contained">ตกลง</Button>
+        <Button variant="outlined" onClick={handleClose}>ยกเลิก</Button>
       </Stack>
     </Box>
   );

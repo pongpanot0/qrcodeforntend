@@ -144,7 +144,7 @@ const useTreeItemStyles = makeStyles((theme) =>
       fontSize: 15,
       float: "left",
       textAlign: "left",
-      color:'black'
+      color: "black",
     },
     labelHeaderText: {
       fontWeight: "inherit",
@@ -152,7 +152,7 @@ const useTreeItemStyles = makeStyles((theme) =>
       fontSize: 20,
       float: "left",
       textAlign: "left",
-      color:'black'
+      color: "black",
     },
     labelHeaderText2: {
       fontWeight: "bold",
@@ -160,7 +160,7 @@ const useTreeItemStyles = makeStyles((theme) =>
       fontSize: 25,
       float: "left",
       textAlign: "left",
-      color:'black'
+      color: "black",
     },
   })
 );
@@ -194,6 +194,15 @@ export default function Buildingtree(props) {
       .catch(function (error) {
         console.log(error);
       });
+  };
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open2 = Boolean(anchorEl);
+  const open3 = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
   const DeleteRoom = (id) => {
     console.log("1234");
@@ -262,14 +271,32 @@ export default function Buildingtree(props) {
               โซน {row.name}
             </Typography>{" "}
             <Button
-              onClick={() => {
-                Delete(row.uuid);
-              }}
-              variant="contained"
-             style={{backgroundColor:'#b2102f'}}
+              id="basic-button"
+              aria-controls={open3 ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open3 ? "true" : undefined}
+              onClick={handleClick}
+              style={{ color: "#b2102f" }}
             >
-              ลบโซน
+              Action
             </Button>
+            <Menu
+              id="basic-menu"
+              anchorEl={anchorEl}
+              open={open3}
+              onClose={handleClose}
+              MenuListProps={{
+                "aria-labelledby": "basic-button",
+              }}
+            >
+              <MenuItem
+                onClick={() => {
+                  DeleteRoom(row.uuid);
+                }}
+              >
+                Delete
+              </MenuItem>
+            </Menu>
           </div>
         }
         style={{ marginLeft: 10, fontSize: 75 }}
@@ -292,13 +319,32 @@ export default function Buildingtree(props) {
                     โซนสาขา : {row.name}
                   </Typography>{" "}
                   <Button
-                   style={{color:'#b2102f'}}
-                    onClick={() => {
-                      DeleteRoom(row.uuid);
+                    id="basic-button"
+                    aria-controls={open2 ? "basic-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open2 ? "true" : undefined}
+                    onClick={handleClick}
+                    style={{ color: "#b2102f" }}
+                  >
+                    Action
+                  </Button>
+                  <Menu
+                    id="basic-menu"
+                    anchorEl={anchorEl}
+                    open={open2}
+                    onClose={handleClose}
+                    MenuListProps={{
+                      "aria-labelledby": "basic-button",
                     }}
                   >
-                    ลบโซนสาขา
-                  </Button>
+                    <MenuItem
+                      onClick={() => {
+                        DeleteRoom(row.uuid);
+                      }}
+                    >
+                      Delete
+                    </MenuItem>
+                  </Menu>
                 </div>
               }
               bgColor="#fcefe3"
@@ -334,7 +380,6 @@ export default function Buildingtree(props) {
                   ชื่อตึก : {building.name}
                 </Typography>{" "}
                 <></>
-              
               </div>
             }
             color="black"

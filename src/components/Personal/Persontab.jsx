@@ -9,12 +9,12 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 
-import DeviceTable from "./DeviceTable";
-import Deviceshow from "./Deviceshow";
-import Device from "./Device";
-import Schedue from "../calendar/Calendar";
-import Devicegroup from "./Devicegroup";
-import Devicegroupcard from "./Devicegroupcard";
+import Devicegroupcard from "../Device/Devicegroupcard";
+import Personal from "./Personal";
+import Departmenttable from "../Department/Departmenttable";
+import Department from "../Department/Department";
+import Timeprofile from "./Timeprofile";
+import Timeprofiletable from "./Timeprofiletable";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -56,7 +56,7 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-export default function Devicetab() {
+export default function Persontab() {
   const [value, setValue] = React.useState(() => {
     const stickyValue = window.localStorage.getItem("device");
     return stickyValue !== null ? JSON.parse(stickyValue) : 0;
@@ -74,11 +74,32 @@ export default function Devicetab() {
             {" "}
             <Box sx={{ width: "100%" }}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}></Box>
-             
-           
-                <Device />
-            
-           
+              <Tabs
+                value={value}
+                defaultActiveKey={localStorage.getItem("keys")}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+                variant="fullWidth"
+                textColor="inherit"
+                indicatorColor="secondary"
+              >
+                <Tab label="บุคคล" {...a11yProps(0)} />
+                <Tab label="แผนก" {...a11yProps(1)} />
+                <Tab label="กำหนดสิทธิ์เข้าถึง" {...a11yProps(2)} />
+                <Tab label="TimeProfile" {...a11yProps(3)} />
+              </Tabs>
+              <TabPanel fullwidth value={value} index={0}>
+                <Personal />
+              </TabPanel>
+              <TabPanel value={value} index={2}>
+                <Devicegroupcard />
+              </TabPanel>
+              <TabPanel value={value} index={1}>
+                <Department />
+              </TabPanel>
+              <TabPanel fullwidth value={value} index={3}>
+                <Timeprofiletable />
+              </TabPanel>
             </Box>
           </Item>
         </Grid>

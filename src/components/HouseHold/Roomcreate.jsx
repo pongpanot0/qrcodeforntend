@@ -37,7 +37,6 @@ const Roomcreate = () => {
   const [room_buildingUuid, setroom_buildingUuid] = React.useState("");
   const [room_name, setroom_name] = React.useState("");
   const [building, setBuilding] = React.useState([]);
-  const [code, setCode] = React.useState("");
   const [fail, setfail] = React.useState(false);
   React.useEffect(() => {
     setError(true);
@@ -62,7 +61,6 @@ const Roomcreate = () => {
         room_buildingUuid: room_buildingUuid,
         room_name: room_name,
         created_by: user_id,
-        code: code,
       })
 
       .then((res) => {
@@ -81,15 +79,15 @@ const Roomcreate = () => {
   const [open, setOpen] = React.useState(false);
 
   const handleClose = () => {
-    setOpen(false);
+    window.location.reload(false)
   };
   const handleChange = (event) => {
     setroom_buildingUuid(event.target.value);
   };
   return (
     
-      <Box sx={{ ...style, width: 800 }}>
-        <h2 id="parent-modal-title">New Room</h2>
+      <Box sx={{ ...style, width: 800 }} open={open}>
+        <h2 id="parent-modal-title">เพิ่มโซนสาขา</h2>
         <br></br>
         <hr></hr>
         <br></br>
@@ -105,7 +103,7 @@ const Roomcreate = () => {
               <FormControl sx={{ m: 1, width: "100%" }}>
                 <div className="row" style={{ width: "100%" }}>
                   <div className="col-25">
-                    <label for="fname">ตึก</label>
+                    <label for="fname">โซน</label>
                   </div>
                   <div className="col-50">
                     <FormControl fullWidth style={{ width: "100%" }}>
@@ -129,7 +127,7 @@ const Roomcreate = () => {
               <FormControl sx={{ width: "100%" }}>
                 <div className="row" style={{ width: "100%" }}>
                   <div className="col-25">
-                    <label for="fname">RoomName</label>
+                    <label for="fname">ชื่อโซนสาขา</label>
                   </div>
                   <div className="col-75">
                     <TextField
@@ -147,37 +145,15 @@ const Roomcreate = () => {
                 <br></br>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
-              <FormControl sx={{ m: 1, width: "100%" }}>
-                <div className="row" style={{ width: "100%" }}>
-                  <div className="col-30">
-                    <label for="fname">RoomNum</label>
-                  </div>
-                  <div className="col-50">
-                    <TextField
-                      type="text"
-                      id="fname"
-                      name="firstname"
-                      placeholder="ใส่ได้เฉพาะตัวเลข"
-                      fullWidth
-                      onChange={(e) => {
-                        setCode(e.target.value);
-                      }}
-                    />
-                  </div>
-                </div>
-                <br></br>
-              </FormControl>
-            </Grid>
           </Grid>
         </Box>
         <hr></hr>
         <br />
         <Stack direction="row" spacing={2}>
           <Button variant="contained" onClick={createbuild}>
-            Submit
+            ตกลง
           </Button>
-          <Button variant="outlined">Reset</Button>
+          <Button variant="outlined" onClick={handleClose}>ยกเลิก</Button>
         </Stack>
       </Box>
 

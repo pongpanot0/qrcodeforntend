@@ -138,7 +138,7 @@ function Floor() {
                 </DialogContent>
                 <DialogActions>
                   <Button fullWidth onClick={handleClose} autoFocus>
-                    Agree
+                    ตกลง
                   </Button>
                 </DialogActions>
               </Dialog>
@@ -152,7 +152,7 @@ function Floor() {
         aria-describedby="parent-modal-description"
       >
         <Box sx={{ ...style, width: 800 }}>
-          <h2 id="parent-modal-title">New Room</h2>
+          <h2 id="parent-modal-title">เพิ่มโซนสาขา</h2>
           <br></br>
           <hr></hr>
           <br></br>
@@ -168,7 +168,7 @@ function Floor() {
                 <FormControl sx={{ m: 1, width: "100%" }}>
                   <div className="row" style={{ width: "100%" }}>
                     <div className="col-25">
-                      <label for="fname">ตึก</label>
+                      <label for="fname">โซน</label>
                     </div>
                     <div className="col-50">
                       <FormControl fullWidth style={{ width: "100%" }}>
@@ -192,7 +192,7 @@ function Floor() {
                 <FormControl sx={{ width: "100%" }}>
                   <div className="row" style={{ width: "100%" }}>
                     <div className="col-25">
-                      <label for="fname">RoomName</label>
+                      <label for="fname">ชื่อโซนสาขา</label>
                     </div>
                     <div className="col-75">
                       <TextField
@@ -210,37 +210,15 @@ function Floor() {
                   <br></br>
                 </FormControl>
               </Grid>
-              <Grid item xs={12}>
-                <FormControl sx={{ m: 1, width: "100%" }}>
-                  <div className="row" style={{ width: "100%" }}>
-                    <div className="col-30">
-                      <label for="fname">RoomNum</label>
-                    </div>
-                    <div className="col-50">
-                      <TextField
-                        type="text"
-                        id="fname"
-                        name="firstname"
-                        placeholder="ใส่ได้เฉพาะตัวเลข"
-                        fullWidth
-                        onChange={(e) => {
-                          setCode(e.target.value);
-                        }}
-                      />
-                    </div>
-                  </div>
-                  <br></br>
-                </FormControl>
-              </Grid>
             </Grid>
           </Box>
           <hr></hr>
           <br />
           <Stack direction="row" spacing={2}>
             <Button variant="contained" onClick={createbuild}>
-              Submit
+              ตกลง
             </Button>
-            <Button variant="outlined">Reset</Button>
+            <Button variant="outlined" onClick={handleClose}>ยกเลิก</Button>
           </Stack>
         </Box>
       </Modal>

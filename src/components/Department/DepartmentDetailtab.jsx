@@ -9,12 +9,11 @@ import Tabs from "@mui/material/Tabs";
 import Tab from "@mui/material/Tab";
 import Typography from "@mui/material/Typography";
 
-import DeviceTable from "./DeviceTable";
-import Deviceshow from "./Deviceshow";
-import Device from "./Device";
-import Schedue from "../calendar/Calendar";
-import Devicegroup from "./Devicegroup";
-import Devicegroupcard from "./Devicegroupcard";
+import Devicegroupcard from "../Device/Devicegroupcard";
+import Departmenttable from "../Department/Departmenttable";
+import Department from "../Department/Department";
+import Departmentdetailtable from "./DepartmentDetailTable";
+import Nodepartment from "./Nodepartment";
 
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
@@ -56,29 +55,39 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-export default function Devicetab() {
-  const [value, setValue] = React.useState(() => {
-    const stickyValue = window.localStorage.getItem("device");
-    return stickyValue !== null ? JSON.parse(stickyValue) : 0;
-  });
+export default function DepartmentDetailtab({ id }) {
+  const [value, setValue] = React.useState(0);
   const handleChange = (event, newValue) => {
-    localStorage.setItem("device", newValue);
     setValue(newValue);
   };
+  console.log(id);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Grid container spacing={3}>
         <Grid item xs={0} sm={2} md={2}></Grid>
-        <Grid item xs={12} sm={8} md={8}>
+        <Grid item xs={12} sm={12} md={12}>
           <Item>
             {" "}
             <Box sx={{ width: "100%" }}>
               <Box sx={{ borderBottom: 1, borderColor: "divider" }}></Box>
-             
-           
-                <Device />
-            
-           
+              <Tabs
+                value={value}
+                defaultActiveKey={localStorage.getItem("keys")}
+                onChange={handleChange}
+                aria-label="basic tabs example"
+                variant="fullWidth"
+                textColor="inherit"
+                indicatorColor="secondary"
+              >
+                <Tab label="บุคคลในแผนก" {...a11yProps(0)} />
+                <Tab label="บุคคลที่ยังไม่มีแผนก" {...a11yProps(1)} />
+              </Tabs>
+              <TabPanel fullwidth value={value} index={0}>
+                <Departmentdetailtable id={id} />
+              </TabPanel>
+              <TabPanel fullwidth value={value} index={1}>
+                <Nodepartment id={id} />
+              </TabPanel>
             </Box>
           </Item>
         </Grid>

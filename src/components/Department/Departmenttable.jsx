@@ -1,4 +1,5 @@
 import * as React from "react";
+import axios from "axios";
 import PropTypes from "prop-types";
 import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
@@ -14,40 +15,40 @@ import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import LinearProgress from "@mui/material/LinearProgress";
 import { visuallyHidden } from "@mui/utils";
-import axios from "axios";
-import { Button, Modal } from "@mui/material";
-import Alert from "@mui/material/Alert";
-import AlertTitle from "@mui/material/AlertTitle";
+import LinearProgress from "@mui/material/LinearProgress";
+
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
 import { Link } from "react-router-dom";
 // This method is created for cross-browser compatibility, if you don't
 // need to support IE11, you can use Array.prototype.sort() directly
 
 const headCells = [
   {
-    id: "name",
+    id: "department_name",
     numeric: false,
     disablePadding: true,
-    label: "ชื่อ",
+    label: "department_name",
   },
   {
-    id: "devSn",
+    id: "department_req",
     numeric: true,
     disablePadding: false,
-    label: "S/N",
+    label: "department_req",
+  },
+
+  {
+    id: "created_by",
+    numeric: true,
+    disablePadding: false,
+    label: "created_by",
   },
   {
-    id: "positionFullName",
+    id: "Action",
     numeric: true,
     disablePadding: false,
-    label: "โซน",
-  },
-  {
-    id: "deviceModelName",
-    numeric: true,
-    disablePadding: false,
-    label: "รุ่น",
+    label: "Action",
   },
 ];
 
@@ -146,7 +147,7 @@ const EnhancedTableToolbar = (props) => {
           id="tableTitle"
           component="div"
         >
-          อุปกรณ์
+          แผนก
         </Typography>
       )}
     </Toolbar>
@@ -181,37 +182,60 @@ function stableSort(array, comparator) {
   });
   return stabilizedThis.map((el) => el[0]);
 }
-export default function DeviceTable({ Selec }) {
+export default function Departmenttable() {
   const [order, setOrder] = React.useState("asc");
   const [orderBy, setOrderBy] = React.useState("calories");
   const [selected, setSelected] = React.useState([]);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [building, setBuilding] = React.useState([]);
   const [items, setItems] = React.useState("");
   const [count, setCount] = React.useState("");
   const [err, setError] = React.useState(false);
-  const [device, setDevice] = React.useState([]);
-  const [success, setSuccess] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [uuid, setUUid] = React.useState("");
+  const handleClose = () => setOpen(false);
+
+  const Delete = (id) => {
+    setError(true);
+    const items = localStorage.getItem("company_id");
+    axios
+      .delete(`${process.env.REACT_APP_API_KEY}/deletebuilding/${items}/${id}`)
+      .then((res) => {
+        console.log(res.data);
+        if (res.data.data.code === 0) {
+          setError(false);
+          getDate();
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  };
+  const Edit = (id) => {
+    setOpen(true);
+
+    setUUid(id);
+  };
   React.useEffect(() => {
     setError(true);
-    getData();
+    getDate();
   }, []);
-  const getData = (event) => {
+  const getDate = () => {
     const items = localStorage.getItem("company_id");
     if (items) {
       setItems(items);
     }
     axios
-      .get(`${process.env.REACT_APP_API_KEY}/getdeviceuuid/${items}`)
+      .get(`${process.env.REACT_APP_API_KEY}/getdepartment/${items}`)
       .then((res) => {
-        console.log(res.data.data.list, "111");
-        setDevice(res.data.data.list);
-        setCount(res.data.data.totalCount);
+        console.log(res.data.data)
+        setBuilding(res.data.data);
+        setCount(res.data.count)
         setError(false);
       });
   };
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -220,13 +244,11 @@ export default function DeviceTable({ Selec }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = device.map((n) => n.name);
+      const newSelected = building.map((n) => n.department_id);
       setSelected(newSelected);
-      Selec(newSelected);
       return;
     }
     setSelected([]);
-    Selec([]);
   };
 
   const handleClick = (event, name) => {
@@ -245,7 +267,7 @@ export default function DeviceTable({ Selec }) {
         selected.slice(selectedIndex + 1)
       );
     }
-    Selec(newSelected);
+
     setSelected(newSelected);
   };
 
@@ -262,97 +284,114 @@ export default function DeviceTable({ Selec }) {
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - count) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - count)
+      : 0;
 
   return (
-    <Box sx={{ width: "100%" }}>
-      {err ? <LinearProgress /> : <> </>}
-      {success ? <LinearProgress /> : <></>}
-      <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
-        <TableContainer>
-          <Table
-            sx={{ minWidth: 750 }}
-            aria-labelledby="tableTitle"
-            size={dense ? "small" : "medium"}
-          >
-            <EnhancedTableHead
-              numSelected={selected.length}
-              order={order}
-              orderBy={orderBy}
-              onSelectAllClick={handleSelectAllClick}
-              onRequestSort={handleRequestSort}
-              rowCount={count}
-            />
-            <TableBody>
-              {/* if you don't need to support IE11, you can replace the `stableSort` call with:
-                 rows.slice().sort(getComparator(order, orderBy)) */}
-              {stableSort(device, getComparator(order, orderBy))
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => {
-                  const isItemSelected = isSelected(row.devSn);
-                  const labelId = `enhanced-table-checkbox-${index}`;
+    <>
+      <Box sx={{ width: "100%", paddingTop: 5 }}>
+        {err ? <LinearProgress /> : <> </>}
 
-                  return (
-                    <TableRow
-                      hover
-                      onClick={(event) => handleClick(event, row.devSn)}
-                      role="checkbox"
-                      aria-checked={isItemSelected}
-                      tabIndex={-1}
-                      key={row.devSn}
-                      selected={isItemSelected}
-                    >
-                      <TableCell padding="checkbox">
-                        <Checkbox
-                          color="primary"
-                          checked={isItemSelected}
-                          inputProps={{
-                            "aria-labelledby": labelId,
-                          }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        component="th"
-                        id={labelId}
-                        scope="row"
-                        padding="none"
+        <Paper sx={{ width: "100%", mb: 2 }}>
+          <EnhancedTableToolbar numSelected={selected.length} />
+          <TableContainer>
+            <Table
+              sx={{ minWidth: 750 }}
+              aria-labelledby="tableTitle"
+              size={dense ? "small" : "medium"}
+            >
+              <EnhancedTableHead
+                numSelected={selected.length}
+                order={order}
+                orderBy={orderBy}
+                onSelectAllClick={handleSelectAllClick}
+                onRequestSort={handleRequestSort}
+                rowCount={count}
+              />
+              <TableBody>
+                {stableSort(building, getComparator(order, orderBy))
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row, index) => {
+                    const isItemSelected = isSelected(row.department_id);
+                    const labelId = `enhanced-table-checkbox-${index}`;
+
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        aria-checked={isItemSelected}
+                        tabIndex={-1}
+                        key={row.department_id}
+                        selected={isItemSelected}
                       >
-                        {row.name}
-                      </TableCell>
-                      <TableCell align="right">{row.devSn}</TableCell>
-                      <TableCell align="right">
-                        {row.positionFullName}
-                      </TableCell>
-                      <TableCell align="right">{row.deviceModelName}</TableCell>
-                      <TableCell align="right">
-                        <Button variant="contained" component={Link} to={`/dashboard/DeviceEdit/${row.devSn}`}>แก้ไข</Button>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })}
-              {emptyRows > 0 && (
-                <TableRow
-                  style={{
-                    height: (dense ? 33 : 53) * emptyRows,
-                  }}
-                >
-                  <TableCell colSpan={6} />
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={count}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-        />
-      </Paper>
-    </Box>
+                        <TableCell padding="checkbox">
+                          <Checkbox
+                            onClick={(event) => handleClick(event, row.department_id)}
+                            color="primary"
+                            checked={isItemSelected}
+                            inputProps={{
+                              "aria-labelledby": labelId,
+                            }}
+                          />
+                        </TableCell>
+                        <TableCell
+                          component="th"
+                          id={labelId}
+                          scope="row"
+                          padding="none"
+                        >
+                          {row.department_name}
+                        </TableCell>
+                        
+
+                        <TableCell align="right">{row.department_req}</TableCell>
+                        <TableCell align="right">{row.created_by}</TableCell>
+                        <TableCell align="right">
+                          <Button
+                            color="primary"
+                            onClick={() => {
+                              Delete(row.department_id);
+                            }}
+                          >
+                            Delete
+                          </Button>
+                          <Button
+                            color="primary"
+                            component={Link}
+                            to={'/dashboard/DepartmentDetail/'+row.department_id}
+                          >
+                            Details
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                {emptyRows > 0 && (
+                  <TableRow
+                    style={{
+                      height: (dense ? 33 : 53) * emptyRows,
+                    }}
+                  >
+                    <TableCell colSpan={6} />
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <TablePagination
+            rowsPerPageOptions={[5, 10, 25]}
+            component="div"
+            count={count}
+            rowsPerPage={rowsPerPage}
+            page={page}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+        </Paper>
+
+      
+      </Box>
+    </>
   );
 }
